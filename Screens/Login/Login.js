@@ -1,17 +1,82 @@
-import { Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react';
 import globalCSS from "../../utils/GlobalCSS";
+import HostName from "../../utils/HostName";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSignIn = () => {
-    navigation.navigate("UserHome")
-  }
-  const handleSignInOwner = () => {
-    navigation.navigate("SellerHome")
+  const [error, setError] = useState("");
+
+
+  const handleSignIn = async (event) => {
+    if (!email || !password) {
+      setError("Fill all fields");
+      return;
+    }
+    try {
+      const res = await fetch(`${HostName}users/login-user`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      if (res.status === 200) {
+        const data = await res.json();
+        const token = data.token;
+        await AsyncStorage.setItem('jwtToken', `Bearer ${token}`);
+        setError("");
+        navigation.navigate("UserHome")
+      }
+      else {
+        setError("Login failed. Please check your credentials.");
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSignInOwner = async() => {
+    if (!email || !password) {
+      setError("Fill all fields");
+      return;
+    }
+    try {
+      const res = await fetch(`${HostName}users/login-owner`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      if (res.status === 200) {
+        const data = await res.json();
+        const token = data.tokenOwner;
+        await AsyncStorage.setItem('jwtToken', `Bearer-Owner ${token}`);
+        console.log("Bearer-Owner "+ token);
+        setError("");
+        navigation.navigate("SellerHome")
+      }
+      else {
+        setError("Owner Login failed. Please check your credentials.");
+        Alert.alert("Failure!", "Owner Login failed. Please check your credentials.")
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
+
     <View style={[styles.main_center_container, globalCSS.bgcZero]}>
       <View style={styles.signup_link}>
         <Text style={globalCSS.font25}>Hostel Information System</Text>
@@ -45,7 +110,7 @@ const Login = ({ navigation }) => {
       </View>
       <View style={styles.signup_link}>
         <Text>No existing Account?</Text>
-        <Pressable onPress={()=> {navigation.navigate("SignUp")}}>
+        <Pressable onPress={() => { navigation.navigate("SignUp") }}>
           <Text style={globalCSS.font15}>SignUp here</Text>
         </Pressable>
       </View>

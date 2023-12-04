@@ -1,17 +1,19 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import globalCSS from "./GlobalCSS"
 
-const VerticalListSeller = ({ image, metaDesc, rent, navigation }) => {
+const VerticalListSeller = ({ image, description, rent, navigation, id }) => {
     const navigateToIndividualHostel = () => {
-        navigation.navigate("Seller Hostel");
+        navigation.navigate("Seller Hostel", {id: id});
     }
     return (
         <Pressable onPress={navigateToIndividualHostel}>
             <View style={styles.list_item}>
-                <Image source={image} style={{ width: 100, height: 100, borderBottomLeftRadius: 5, borderTopLeftRadius: 5 }} />
+                <Image 
+                source={{ uri: `data:image/jpeg;base64,${image}` }} 
+                style={{ width: 100, height: 100, borderBottomLeftRadius: 5, borderTopLeftRadius: 5 }} />
                 <View style={styles.description}>
-                    <Text style={[globalCSS.fontNonBold12, styles.text_justify]}>{metaDesc}</Text>
+                    <Text style={[globalCSS.fontNonBold12, styles.text_justify]}>{description}</Text>
                     <Text style={[styles.rent, styles.text_justify]}>Rs.{rent}</Text>
                 </View>
             </View>

@@ -1,17 +1,61 @@
-import { Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react';
 import globalCSS from "../../utils/GlobalCSS";
+import HostName from '../../utils/HostName';
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const handleSignIn = () => {
+  const [error, setError] = useState("");
 
+
+  const handleSignUp = () => {
+    if (!email || !password || !name || !confirmPassword) {
+      setError("Fill all fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords donot match");
+      return;
+    }
+
+    fetch(`${HostName}users/signup`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        name,
+        password,
+        confirmPassword
+      }),
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Something went wrong.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        navigation.navigate("Login");
+      })
+      .catch((err) => {
+        setError(err.data.msg);
+        console.log(err.data.msg);
+      });
   }
   return (
     <View style={[styles.main_center_container, globalCSS.bgcZero]}>
+      {
+        error ?
+          Alert.alert("Error", `${error}`)
+          :
+          <></>
+      }
       <View style={styles.signup_link}>
         <Text style={globalCSS.font25}>Hostel Information System</Text>
       </View>
@@ -44,7 +88,7 @@ const SignUp = ({ navigation }) => {
           onChangeText={(newValue) => setConfirmPassword(newValue)}
         />
         <Pressable
-          onPress={handleSignIn}
+          onPress={handleSignUp}
           style={[styles.signin_btn, globalCSS.bgcTwo]}
         >
           <Text style={globalCSS.font15}>SignUp</Text>

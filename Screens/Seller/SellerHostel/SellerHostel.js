@@ -1,37 +1,57 @@
 import { Pressable, StyleSheet, Text, TextInput, View, Dimensions, ScrollView } from 'react-native'
-import React, { useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import globalCSS from "../../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Carousal from './Carousal';
 import Carousel, { Pagination } from 'react-native-snap-carousel'
-import hostelOneImage from "../../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../../assets/images/hostelTwo.jpg";
-import hostelThreeImage from "../../../assets/images/hostelThree.jpg";
-import hostelFourImage from "../../../assets/images/hostelFour.jpg";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HostName from '../../../utils/HostName';
+import { useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 
-const SellerHostel = ({ navigation }) => {
+const SellerHostel = ({ navigation, route }) => {
   const isCarousel = useRef(null);
+  const { id } = route.params;
   const windowWidth = Dimensions.get('window').width;
-  const [imageIndex, setImageIndex] = React.useState(0)
-  const DATA = [
-    {
-      id: 1,
-      image: hostelOneImage
-    },
-    {
-      id: 2,
-      image: hostelTwoImage
-    },
-    {
-      id: 3,
-      image: hostelThreeImage
-    },
-    {
-      id: 4,
-      image: hostelFourImage
-    },
-  ];
+  const [imageIndex, setImageIndex] = useState(0);
+  const [hostel, setHostel] = useState();
+  const [images, setImages] = useState();
+  useFocusEffect(
+    useCallback(() => {
+      getOwnerHostels();
+    }, [])
+  )
+  const getOwnerHostels = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}hostels/hostel/${id}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.hostel) {
+        setHostel(data.hostel)
+        setImages(
+          [
+            {
+              id: 1,
+              image: data.hostel.image
+            },
+            {
+              id: 2,
+              image: data.hostel.image
+            }
+          ]
+        )
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
+  }
   const navigateToHome = () => {
     navigation.navigate("BottomTabs");
   }
@@ -63,7 +83,7 @@ const SellerHostel = ({ navigation }) => {
               layout="tinder"
               ref={isCarousel}
               layoutCardOffset={9}
-              data={DATA}
+              data={images}
               renderItem={Carousal}
               sliderWidth={windowWidth}
               itemWidth={windowWidth}
@@ -73,7 +93,7 @@ const SellerHostel = ({ navigation }) => {
               useScrollView={true}
             />
             <Pagination
-              dotsLength={DATA.length}
+              dotsLength={images ? images.length : null}
               activeDotIndex={imageIndex}
               carouselRef={isCarousel}
               dotStyle={{
@@ -107,9 +127,7 @@ const SellerHostel = ({ navigation }) => {
                   Description
                 </Text>
                 <Text style={globalCSS.font15NonBold}>
-                  Its the best hostel near university with sunrise view.
-                  Its the best 2 bed hostel with study tables.
-                  The hostels available lavish interior
+                  {hostel ? hostel.description : ""}
                 </Text>
               </View>
               <View style={styles.location}>
@@ -121,10 +139,10 @@ const SellerHostel = ({ navigation }) => {
                   {" "}Location
                 </Text>
                 <Text style={globalCSS.font15NonBold}>
-                  Area: Defense road
+                  University: {hostel ? hostel.university : ""}
                 </Text>
                 <Text style={globalCSS.font15NonBold}>
-                  City: Lahore
+                  City: {hostel ? hostel.city : ""}
                 </Text>
               </View>
               <View style={styles.price}>
@@ -132,7 +150,7 @@ const SellerHostel = ({ navigation }) => {
                   Rent Price
                 </Text>
                 <Text>
-                  Rs.12000
+                  Rs.{hostel ? hostel.rent : ""}
                 </Text>
               </View>
               <View style={styles.price}>
@@ -140,44 +158,142 @@ const SellerHostel = ({ navigation }) => {
                   Beds
                 </Text>
                 <Text>
-                  2 beds
+                  {hostel ? hostel.bedsInRoom : ""} Beds
                 </Text>
               </View>
               <View style={styles.facilities}>
                 <Text style={globalCSS.font20}>
                   Facilities
                 </Text>
-                <View>
-                  <View style={styles.row3}>
-                    <View style={styles.facilitiesBox}>
-                      <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
-                      <Text>
-                        Room
-                      </Text>
-                    </View>
-                    <View style={styles.facilitiesBox}>
-                      <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
-                      <Text>
-                        Bathroom
-                      </Text>
-                    </View>
-                    <View style={styles.facilitiesBox}>
-                      <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
-                      <Text>
-                        Kitchen
-                      </Text>
-                    </View>
-                  </View>
 
-                  <View style={styles.row3}>
-                    <View style={styles.facilitiesBox}>
-                      <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
-                      <Text>
-                        Wifi
-                      </Text>
-                    </View>
-                  </View>
-                </View>
+                {
+                  hostel ?
+                    hostel.facilities === "Room + Bath + Kitchen + Wifi" ?
+                      <View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Room
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Bathroom
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Kitchen
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Wifi
+                            </Text>
+                          </View>
+                        </View>
+                      </View> : <></> : <></>
+                }
+                {
+                  hostel ?
+                    hostel.facilities === "Room + Bath + Wifi" ?
+                      <View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Room
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Bathroom
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Wifi
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      :
+                      <></> : <></>
+                }
+                {
+                  hostel ?
+                    hostel.facilities === "Room + Bath + Kitchen" ?
+                      <View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Room
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Bathroom
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Kitchen
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      :
+                      <></> : <></>
+                }
+                {
+                  hostel ?
+                    hostel.facilities === "Room + Bath" ?
+                      <View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Room
+                            </Text>
+                          </View>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Bathroom
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      :
+                      <></> : <></>
+                }
+                {
+                  hostel ?
+                    hostel.facilities === "Room Only" ?
+                      <View>
+                        <View style={styles.row3}>
+                          <View style={styles.facilitiesBox}>
+                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <Text>
+                              Room
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      :
+                      <></> : <></>
+                }
               </View>
             </View>
           </View>
@@ -227,7 +343,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomColor: "grey",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    width: "100%"
   },
   location: {
     justifyContent: "flex-start",

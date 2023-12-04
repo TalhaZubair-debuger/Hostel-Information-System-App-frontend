@@ -1,21 +1,33 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import globalCss from "./GlobalCSS";
+import React, { useCallback, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
 
-const HorizontalList = ({ image, metaDesc, rent, navigation }) => {
+const HorizontalList = ({ id, image, metaDesc, rent, navigation }) => {
+  const [description, setDescription] = useState("");
+  useFocusEffect(
+    useCallback(() => {
+      if (metaDesc.length >= 30){
+        setDescription(`${metaDesc.slice(0, 30)}...`);
+      }
+      else {
+        setDescription(metaDesc);
+      }
+    }, [])
+  )
   const handleNavigation = () => {
-    navigation.navigate("Hostel");
+    navigation.navigate("Hostel", {id: id});
   }
+  
   return (
     <View style={styles.prodduct_box}>
       <Pressable onPress={handleNavigation}>
         <View style={styles.image}>
-          <Image source={image} style={styles.imageStyle} />
+          <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={styles.imageStyle} />
         </View>
         <View style={styles.content}>
           <View style={[styles.description]}>
             <Text>
-              {metaDesc}
+              {description}
             </Text>
           </View>
           <View>
@@ -38,21 +50,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 150,
     margin: 5,
-    // padding: 5,
     shadowRadius: 5,
     backgroundColor: "#fff",
-    // shadowColor: "black",
     elevation: 5,
     shadowColor: "#777777bb",
   },
   imageStyle: {
     height: 150,
-    width: 150
+    width: 150,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5
   },
   content: {
-    // justifyContent: "center",
-    // alignItems: "center",
-    flex: 1,
+    paddingBottom:10,
     flexDirection: "column",
   },
   description: {

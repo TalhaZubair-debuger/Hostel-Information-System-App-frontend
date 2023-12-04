@@ -1,5 +1,5 @@
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, Touchable, View } from 'react-native'
-import React, { useState } from 'react'
+import { Alert, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, Touchable, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import hostelOneImage from "../../assets/images/hostelOne.jpg";
@@ -8,8 +8,17 @@ import hostelThreeImage from "../../assets/images/hostelThree.jpg";
 import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import hostelBanner from "../../assets/images/hostelbanner.jpg";
 import HorizontalList from '../../utils/HorizontalList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HostName from '../../utils/HostName';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
+  const [hostels, setHostels] = useState();
+  useFocusEffect(
+    useCallback(() => {
+      getHostels();
+    }, [])
+  )
   const DATA = [
     {
       id: 1,
@@ -42,6 +51,24 @@ const Home = ({ navigation }) => {
   }
   const navigateToMessages = () => {
     navigation.navigate("Messages");
+  }
+  const getHostels = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}hostels/top-hostels`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.hostels) {
+        setHostels(data.hostels)
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
   }
   return (
     <ScrollView>
@@ -128,19 +155,20 @@ const Home = ({ navigation }) => {
         <Text style={[globalCSS.font20, globalCSS.text_center]}>
           Top Rated Hostels
         </Text>
-        <View>
+        <View style={styles.topHostels}>
           <FlatList
             horizontal={true}
-            data={DATA}
+            data={hostels}
             renderItem={({ item }) => (
               <HorizontalList
                 image={item.image}
-                metaDesc={item.metaDesc}
+                metaDesc={item.description}
                 rent={item.rent}
+                id={item._id}
                 navigation={navigation}
               />
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item._id.toString()}
           // extraData={selectedId}
           />
         </View>
@@ -205,5 +233,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     margin: 5,
     height: 40
+  },
+  topHostels: {
+    marginBottom: 20
   }
 })

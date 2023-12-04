@@ -5,7 +5,7 @@ const Carousal = ({ item, index }) => {
     return (
         <View key={index}>
             <Image
-                source={item.image}
+                source={{ uri: `data:image/jpeg;base64,${item.image}` }}
                 alt='Hostel Image'
                 style={styles.image}
             />

@@ -1,52 +1,96 @@
-import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import globalCSS from "../../utils/GlobalCSS";
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import VerticalList from '../../utils/VerticalList';
-import hostelOneImage from "../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
-import hostelThreeImage from "../../assets/images/hostelThree.jpg";
-import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HostName from '../../utils/HostName';
+import { useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 
 const SearchHostels = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [searchLocation, setSearchLocation] = useState("");
-    const [area, setArea] = useState("");
-    const [roomSize, setRoomSize] = useState("50 sq. ft");
-    const [facilities, setFacilities] = useState("Room Only");
-    const DATA = [
-        {
-            id: 1,
-            image: hostelOneImage,
-            metaDesc: "Its the best hostel under best price",
-            rent: "7000"
-        },
-        {
-            id: 2,
-            image: hostelTwoImage,
-            metaDesc: "Its the best 2 bed hostel with study tables",
-            rent: "11000"
-        },
-        {
-            id: 3,
-            image: hostelThreeImage,
-            metaDesc: "Its the best hostel near university with sunrise view",
-            rent: "19000"
-        },
-        {
-            id: 4,
-            image: hostelFourImage,
-            metaDesc: "The hostels available lavish interior",
-            rent: "6500"
-        },
-    ];
+    const [city, setCity] = useState("");
+    const [roomSize, setRoomSize] = useState("");
+    const [facilities, setFacilities] = useState("");
+    const [bedsInRoom, setBedsInRoom] = useState("");
+    const [university, setUniversity] = useState("");
+
+    const [hostels, setHostels] = useState();
+    useFocusEffect(
+        useCallback(() => {
+            getHostels();
+        }, [])
+    )
+    const getHostels = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostels/all-hostels`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.hostels) {
+                setHostels(data.hostels)
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
     const navigateBackToHome = () => {
         navigation.navigate("BottomTabs");
     }
     const handleFilter = () => {
         setModalVisible(true);
+    }
+    const handleSearch = async () => {
+        if (city !== "" && roomSize === "" && facilities === "" && bedsInRoom === "" && university === "") {
+            try {
+                const jwtToken = await AsyncStorage.getItem("jwtToken");
+                const response = await fetch(`${HostName}hostels/hostels-city?city=${city}`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `${jwtToken}`
+                    }
+                });
+                const data = await response.json();
+                if (data.hostels) {
+                    setHostels(data.hostels)
+                    console.log(data.hostels)
+                }
+            } catch (error) {
+                Alert.alert("Failed to search!", `${error.message}`);
+                console.log(error);
+            }
+        }
+        else if (city !== "" && roomSize !== "" && facilities !== "" && bedsInRoom !== "" && university !== "") {
+            try {
+                const jwtToken = await AsyncStorage.getItem("jwtToken");
+                console.log(city+" "+roomSize+" "+facilities+" "+bedsInRoom+" "+university);
+                const response = await fetch(`${HostName}hostels/hostels-with-filter?city=${city}&roomSize=${roomSize}&facilities=${facilities}&beds=${bedsInRoom}&university=${university}`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `${jwtToken}`
+                    }
+                });
+                const data = await response.json();
+                if (data.hostels) {
+                    setHostels(data.hostels)
+                }
+            } catch (error) {
+                Alert.alert("Failed to search!", `${error.message}`);
+                console.log(error);
+            }
+        }
+        else {
+            Alert.alert("Failed to search!", `The search paramaters provided are wrong. You can either search through city 
+            filter or by applying all filters together.`);
+        }
     }
     return (
         <View style={styles.container}>
@@ -69,13 +113,13 @@ const SearchHostels = ({ navigation }) => {
                                     selectedValue={roomSize}
                                     onValueChange={(roomSize) => setRoomSize(roomSize)}
                                 >
-                                    <Picker.Item label="5 sq. ft" value="5 sq. ft" />
-                                    <Picker.Item label="10 sq. ft" value="10 sq. ft" />
-                                    <Picker.Item label="15 sq. ft" value="15 sq. ft" />
-                                    <Picker.Item label="20 sq. ft" value="20 sq. ft" />
-                                    <Picker.Item label="30 sq. ft" value="30 sq. ft" />
-                                    <Picker.Item label="40 sq. ft" value="40 sq. ft" />
-                                    <Picker.Item label="50 sq. ft" value="50 sq. ft" />
+                                    <Picker.Item label="5 sq. ft" value="5sq.ft" />
+                                    <Picker.Item label="10 sq. ft" value="10sq.ft" />
+                                    <Picker.Item label="15 sq. ft" value="15sq.ft" />
+                                    <Picker.Item label="20 sq. ft" value="20sq.ft" />
+                                    <Picker.Item label="30 sq. ft" value="30sq.ft" />
+                                    <Picker.Item label="40 sq. ft" value="40sq.ft" />
+                                    <Picker.Item label="50 sq. ft" value="50sq.ft" />
                                 </Picker>
                             </View>
                         </View>
@@ -89,10 +133,11 @@ const SearchHostels = ({ navigation }) => {
                                     selectedValue={facilities}
                                     onValueChange={(facilities) => setFacilities(facilities)}
                                 >
-                                    <Picker.Item label="Room Only" value="Room Only" />
-                                    <Picker.Item label="Room + Bath" value="Room + Bath" />
-                                    <Picker.Item label="Room + Bath + Kitchen" value="Room + Bath + Kitchen" />
-                                    <Picker.Item label="Room + Bath + Wifi" value="Room + Bath + Wifi" />
+                                    <Picker.Item label="Room Only" value="RoomOnly" />
+                                    <Picker.Item label="Room + Bath" value="RoomBath" />
+                                    <Picker.Item label="Room + Bath + Kitchen" value="RoomBathKitchen" />
+                                    <Picker.Item label="Room + Bath + Wifi" value="RoomBathWifi" />
+                                    <Picker.Item label="Room + Bath + Kitchen + Wifi" value="RoomBathKitchenWifi" />
                                 </Picker>
                             </View>
                         </View>
@@ -101,17 +146,17 @@ const SearchHostels = ({ navigation }) => {
                     <View style={styles.row}>
                         <View style={styles.width100}>
                             <Text style={globalCSS.font15NonBold}>
-                                Beds
+                                Beds In Room
                             </Text>
                             <View style={styles.dropdown}>
                                 <Picker
-                                    selectedValue={facilities}
-                                    onValueChange={(facilities) => setFacilities(facilities)}
+                                    selectedValue={bedsInRoom}
+                                    onValueChange={(value) => setBedsInRoom(value)}
                                 >
-                                    <Picker.Item label="1 Bed" value="1 Bed" />
-                                    <Picker.Item label="2 Beds" value="2 Beds" />
-                                    <Picker.Item label="3 Beds" value="3 Beds" />
-                                    <Picker.Item label="4 Beds" value="4 Beds" />
+                                    <Picker.Item label="1 Bed" value="1" />
+                                    <Picker.Item label="2 Beds" value="2" />
+                                    <Picker.Item label="3 Beds" value="3" />
+                                    <Picker.Item label="4 Beds" value="4" />
                                 </Picker>
                             </View>
                         </View>
@@ -120,13 +165,13 @@ const SearchHostels = ({ navigation }) => {
                     <View style={styles.row}>
                         <View style={styles.width100}>
                             <Text style={globalCSS.font15NonBold}>
-                                Area
+                                University
                             </Text>
                             <TextInput
-                                placeholder="Search Area"
+                                placeholder="Search University"
                                 style={globalCSS.inputStyle3}
-                                value={area}
-                                onChangeText={(newValue) => setArea(newValue)}
+                                value={university}
+                                onChangeText={(newValue) => setUniversity(newValue)}
                             />
                         </View>
                     </View>
@@ -160,8 +205,8 @@ const SearchHostels = ({ navigation }) => {
                     <TextInput
                         placeholder="Search City"
                         style={globalCSS.inputStyle3}
-                        value={searchLocation}
-                        onChangeText={(newValue) => setSearchLocation(newValue)}
+                        value={city}
+                        onChangeText={(newValue) => setCity(newValue)}
                     />
                 </View>
                 <View style={styles.top_row}>
@@ -171,25 +216,38 @@ const SearchHostels = ({ navigation }) => {
                             Apply Search Filters
                         </Text>
                     </Pressable>
-                    <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
-                        <FontAwesome5 name={"search"} size={20} color={"black"} />
-                    </Text>
+                    <TouchableOpacity onPress={handleSearch}>
+                        <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
+                            <FontAwesome5 name={"search"} size={20} color={"black"} />
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
 
             <View>
-                <FlatList
-                    data={DATA}
-                    renderItem={({ item }) => (
-                        <VerticalList
-                            image={item.image}
-                            metaDesc={item.metaDesc}
-                            rent={item.rent}
+                {
+                    hostels ?
+                    hostels.length ?
+                        <FlatList
+                            data={hostels}
+                            renderItem={({ item }) => (
+                                <VerticalList
+                                    image={item.image}
+                                    metaDesc={item.description}
+                                    rent={item.rent}
+                                    id={item._id}
+                                    navigation={navigation}
+                                />
+                            )}
+                            keyExtractor={(item) => item._id.toString()}
                         />
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                // extraData={selectedId}
-                />
+                        :
+                        <View style={styles.width100}>
+                            <Text style={globalCSS.text_center}>No hostels found</Text>
+                        </View>
+                        : 
+                        <></>
+                }
             </View>
 
         </View>
