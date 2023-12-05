@@ -1,13 +1,51 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Alert, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import hostelOneImage from "../../assets/images/hostelOne.jpg";
 import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
 import VerticalList from '../../utils/VerticalList';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HostName from '../../utils/HostName';
 
 
-const Favorites = () => {
+const Favorites = ({ navigation }) => {
+  const [hostels, setHostels] = useState();
+  const [favorite, setFavorite] = useState(false);
+  const [userFavs, setUserFavs] = useState();
+  useFocusEffect(
+    useCallback(() => {
+      getHostels();
+    }, [favorite])
+  )
+  const getHostels = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}hostels/favorites/get-favorite-hostels`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.hostels) {
+        setHostels(data.hostels)
+        const userResponse = await fetch(`${HostName}users/get-user-favorites`, {
+          method: "GET",
+          headers: {
+            'Authorization': `${jwtToken}`
+          }
+        });
+        const Data = await userResponse.json();
+        setUserFavs(Data.favorites);
+        setFavorite(false);
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
+  }
   const DATA = [
     {
       id: 1,
@@ -40,18 +78,33 @@ const Favorites = () => {
         </View>
 
         <View style={styles.list}>
-          <FlatList
-            data={DATA}
-            renderItem={({ item }) => (
-              <VerticalList
-                image={item.image}
-                metaDesc={item.metaDesc}
-                rent={item.rent}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          // extraData={selectedId}
-          />
+          {
+            hostels ?
+              hostels.length ?
+                <FlatList
+                  data={hostels}
+                  renderItem={({ item }) => (
+                    <VerticalList
+                      image={item.image}
+                      metaDesc={item.description}
+                      rent={item.rent}
+                      setFavorite={setFavorite}
+                      userFavs={userFavs}
+                      id={item._id}
+                      navigation={navigation}
+                    />
+                  )}
+                  keyExtractor={(item) => item._id.toString()}
+                />
+                :
+                <View style={styles.width100}>
+                  <Text style={globalCSS.text_center}>No Favorite hostels found</Text>
+                </View>
+              :
+              <View style={styles.width100}>
+                <Text style={globalCSS.text_center}>No Favorite hostels found</Text>
+              </View>
+          }
         </View>
       </View>
     </ScrollView>

@@ -80,7 +80,7 @@ const UserHostel = ({ navigation, route }) => {
         navigation.navigate("BottomTabs");
     }
     const handleNavigateToBookingPage = () => {
-        navigation.navigate("Booking");
+        navigation.navigate("Booking", { id: hostel._id });
     }
 
 

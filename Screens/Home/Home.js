@@ -2,56 +2,23 @@ import { Alert, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextIn
 import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import hostelOneImage from "../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
-import hostelThreeImage from "../../assets/images/hostelThree.jpg";
-import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import hostelBanner from "../../assets/images/hostelbanner.jpg";
 import HorizontalList from '../../utils/HorizontalList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HostName from '../../utils/HostName';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import axios from 'axios';
 
 const Home = ({ navigation }) => {
   const [hostels, setHostels] = useState();
+  const [searchLocation, setSearchLocation] = useState("");
+  const [city, setCity] = useState("");
   useFocusEffect(
     useCallback(() => {
       getHostels();
     }, [])
   )
-  const DATA = [
-    {
-      id: 1,
-      image: hostelOneImage,
-      metaDesc: "Its the best hostel under best price",
-      rent: "7000"
-    },
-    {
-      id: 2,
-      image: hostelTwoImage,
-      metaDesc: "Its the best 2 bed hostel with study tables",
-      rent: "11000"
-    },
-    {
-      id: 3,
-      image: hostelThreeImage,
-      metaDesc: "Its the best hostel near university with sunrise view",
-      rent: "19000"
-    },
-    {
-      id: 4,
-      image: hostelFourImage,
-      metaDesc: "The hostels available lavish interior",
-      rent: "6500"
-    },
-  ];
-  const [searchLocation, setSearchLocation] = useState("");
-  const navigateToSearchPage = () => {
-    navigation.navigate("Search Hostels")
-  }
-  const navigateToMessages = () => {
-    navigation.navigate("Messages");
-  }
   const getHostels = async () => {
     try {
       const jwtToken = await AsyncStorage.getItem("jwtToken");
@@ -70,6 +37,37 @@ const Home = ({ navigation }) => {
       console.log(error);
     }
   }
+  const getLocationAndNavigate = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert("Alert", "Permission to access location was denied!");
+      return;
+    } else {
+      const { coords } = await Location.getCurrentPositionAsync({});
+      try {
+        const { data } = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},
+        ${coords.longitude}&key=AIzaSyC4-f19hjeChzbjF8dXn4M4gpIfP0wEvi0`, {
+          method: "GET"
+        }
+        )
+        console.log(data);
+        // Extract city from the response
+        const addressComponents = data.results[0].address_components;
+        const cityComponent = addressComponents.find((component) =>
+          component.types.includes('locality')
+        );
+
+        if (cityComponent) {
+          setCity(cityComponent.long_name);
+          console.log(cityComponent.long_name);
+          navigation, navigate("Search Hostels", { city: cityComponent.long_name });
+        }
+
+      } catch (error) {
+        Alert.alert("Error", "Couldn't get your current location");
+      }
+    }
+  }
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -77,7 +75,7 @@ const Home = ({ navigation }) => {
           <Text style={globalCSS.font20}>
             Hi Muhammad,
           </Text>
-          <Pressable onPress={navigateToMessages}>
+          <Pressable onPress={() => { navigation.navigate("Messages") }}>
             <View style={globalCSS.center_vertical}>
               <Text >
                 <FontAwesome5 name={"comment"} size={25} color={"black"} />
@@ -115,7 +113,7 @@ const Home = ({ navigation }) => {
         </View>
         <View style={globalCSS.row}>
           <View style={styles.box}>
-            <Pressable onPress={navigateToSearchPage}>
+            <Pressable onPress={() => { navigation.navigate("Search Hostels") }}>
               <Text style={[globalCSS.text_center]}>
                 <FontAwesome5 name={"hotel"} size={25} color={"#00D2FF"} />
               </Text>
@@ -125,7 +123,7 @@ const Home = ({ navigation }) => {
             </Pressable>
           </View>
           <View style={styles.box}>
-            <Pressable onPress={navigateToSearchPage}>
+            <Pressable onPress={() => { navigation.navigate("Search Hostels") }}>
               <Text style={[globalCSS.text_center]}>
                 <FontAwesome5 name={"hourglass"} size={25} color={"#00D2FF"} />
               </Text>
@@ -135,7 +133,7 @@ const Home = ({ navigation }) => {
             </Pressable>
           </View>
           <View style={styles.box}>
-            <Pressable onPress={navigateToSearchPage}>
+            <Pressable onPress={getLocationAndNavigate}>
               <Text style={[globalCSS.text_center]}>
                 <FontAwesome5 name={"map-marker-alt"} size={25} color={"#00D2FF"} />
               </Text>

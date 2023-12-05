@@ -44,18 +44,13 @@ const SignUp = ({ navigation }) => {
         navigation.navigate("Login");
       })
       .catch((err) => {
-        setError(err.data.msg);
-        console.log(err.data.msg);
+        setError(err.message);
+        Alert.alert("Alert", err.message)
+        // console.log(err.data.msg);
       });
   }
   return (
     <View style={[styles.main_center_container, globalCSS.bgcZero]}>
-      {
-        error ?
-          Alert.alert("Error", `${error}`)
-          :
-          <></>
-      }
       <View style={styles.signup_link}>
         <Text style={globalCSS.font25}>Hostel Information System</Text>
       </View>

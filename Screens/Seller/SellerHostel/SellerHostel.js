@@ -56,7 +56,7 @@ const SellerHostel = ({ navigation, route }) => {
     navigation.navigate("BottomTabs");
   }
   const navigateToBedsInfo = () => {
-    navigation.navigate("Beds Info");
+    navigation.navigate("Beds Info", {id: id});
   }
   return (
     <View style={styles.TopContainer}>

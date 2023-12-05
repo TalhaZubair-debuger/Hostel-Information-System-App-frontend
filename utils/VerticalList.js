@@ -1,12 +1,15 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import globalCSS from "./GlobalCSS"
 import { useFocusEffect } from '@react-navigation/native';
 import { Pressable } from 'react-native';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HostName from './HostName';
 
-const VerticalList = ({ id, image, metaDesc, rent, navigation }) => {
+const VerticalList = ({ id, image, metaDesc, rent, navigation, setFavorite, userFavs }) => {
     const [description, setDescription] = useState("");
+    const [displayFav, setDisplayFav] = useState(false);
     useFocusEffect(
         useCallback(() => {
             if (metaDesc.length >= 50) {
@@ -15,36 +18,89 @@ const VerticalList = ({ id, image, metaDesc, rent, navigation }) => {
             else {
                 setDescription(metaDesc);
             }
-        }, [])
+            if (userFavs) {
+                for (const item of userFavs) {
+                    if (item === id) {
+                        setDisplayFav(true);
+                        break;
+                    }
+                }
+            }
+        }, [id, displayFav, userFavs])
     )
-    const handleNavigation = () => {
-        navigation.navigate("Hostel", { id: id });
-    }
     const handleAddToFavorites = async () => {
-        user.favorites.filter(item => item._id !== id);
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostels/favorites/add-to-favorite/${id}`, {
+                method: "POST",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Alert!", `${data.message}`);
+                setFavorite(true);
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
+    const removeFromFavorites = async() => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostels/favorites/remove-from-favorite/${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Alert!", `${data.message}`);
+                setFavorite(true);
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
     }
     return (
-        <Pressable onPress={handleNavigation}>
+        <View >
             <View style={styles.list_item}>
-                <Image source={{ uri: `data:image/jpeg;base64,${image}` }}
-                    style={{ width: 100, height: 100, borderBottomLeftRadius: 5, borderTopLeftRadius: 5 }} />
-                <View style={styles.description}>
-                    <Text style={[globalCSS.fontNonBold12, styles.text_justify]}>
-                        {description}
-                    </Text>
-                    <Text style={[styles.rent, styles.text_justify]}>
-                        Rs.{rent}
-                    </Text>
-                </View>
-                {/* <Pressable onPress={handleAddToFavorites}> */}
-                <View style={styles.favourites}>
-                    <Text>
-                        <FontAwesome5 name={"heart"} size={20} color={"black"} />
-                    </Text>
-                </View>
-                {/* </Pressable> */}
+                <Pressable onPress={() => { navigation.navigate("Hostel", { id: id }) }} style={styles.list_item}>
+                    <Image source={{ uri: `data:image/jpeg;base64,${image}` }}
+                        style={{ width: 100, height: 100, borderBottomLeftRadius: 5, borderTopLeftRadius: 5 }} />
+                    <View style={styles.description}>
+                        <Text style={[globalCSS.fontNonBold12, styles.text_justify]}>
+                            {description}
+                        </Text>
+                        <Text style={[styles.rent, styles.text_justify]}>
+                            Rs.{rent}
+                        </Text>
+                    </View>
+                </Pressable>
+                {
+                    displayFav === true ?
+                        <Pressable onPress={removeFromFavorites}>
+                            <View style={styles.favourites}>
+                                <Text>
+                                    <FontAwesome5 name={"check-circle"} size={20} color={"black"} />
+                                </Text>
+                            </View>
+                        </Pressable>
+                        :
+                        <Pressable onPress={handleAddToFavorites}>
+                            <View style={styles.favourites}>
+                                <Text>
+                                    <FontAwesome5 name={"heart"} size={20} color={"black"} />
+                                </Text>
+                            </View>
+                        </Pressable>
+                }
             </View>
-        </Pressable>
+        </View>
     )
 }
 

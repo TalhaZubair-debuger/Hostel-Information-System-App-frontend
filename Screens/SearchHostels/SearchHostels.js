@@ -17,12 +17,14 @@ const SearchHostels = ({ navigation }) => {
     const [facilities, setFacilities] = useState("");
     const [bedsInRoom, setBedsInRoom] = useState("");
     const [university, setUniversity] = useState("");
+    const [favorite, setFavorite] = useState(false);
+    const [userFavs, setUserFavs] = useState();
 
     const [hostels, setHostels] = useState();
     useFocusEffect(
         useCallback(() => {
             getHostels();
-        }, [])
+        }, [favorite])
     )
     const getHostels = async () => {
         try {
@@ -36,6 +38,15 @@ const SearchHostels = ({ navigation }) => {
             const data = await response.json();
             if (data.hostels) {
                 setHostels(data.hostels)
+                const userResponse = await fetch(`${HostName}users/get-user-favorites`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `${jwtToken}`
+                    }
+                });
+                const Data = await userResponse.json();
+                setUserFavs(Data.favorites);
+                setFavorite(false);
             }
         } catch (error) {
             Alert.alert("Failed to fetch!", `${error.message}`);
@@ -71,7 +82,7 @@ const SearchHostels = ({ navigation }) => {
         else if (city !== "" && roomSize !== "" && facilities !== "" && bedsInRoom !== "" && university !== "") {
             try {
                 const jwtToken = await AsyncStorage.getItem("jwtToken");
-                console.log(city+" "+roomSize+" "+facilities+" "+bedsInRoom+" "+university);
+                console.log(city + " " + roomSize + " " + facilities + " " + bedsInRoom + " " + university);
                 const response = await fetch(`${HostName}hostels/hostels-with-filter?city=${city}&roomSize=${roomSize}&facilities=${facilities}&beds=${bedsInRoom}&university=${university}`, {
                     method: "GET",
                     headers: {
@@ -227,25 +238,27 @@ const SearchHostels = ({ navigation }) => {
             <View>
                 {
                     hostels ?
-                    hostels.length ?
-                        <FlatList
-                            data={hostels}
-                            renderItem={({ item }) => (
-                                <VerticalList
-                                    image={item.image}
-                                    metaDesc={item.description}
-                                    rent={item.rent}
-                                    id={item._id}
-                                    navigation={navigation}
-                                />
-                            )}
-                            keyExtractor={(item) => item._id.toString()}
-                        />
+                        hostels.length ?
+                            <FlatList
+                                data={hostels}
+                                renderItem={({ item }) => (
+                                    <VerticalList
+                                        image={item.image}
+                                        metaDesc={item.description}
+                                        rent={item.rent}
+                                        id={item._id}
+                                        setFavorite={setFavorite}
+                                        userFavs={userFavs}
+                                        navigation={navigation}
+                                    />
+                                )}
+                                keyExtractor={(item) => item._id.toString()}
+                            />
+                            :
+                            <View style={styles.width100}>
+                                <Text style={globalCSS.text_center}>No hostels found</Text>
+                            </View>
                         :
-                        <View style={styles.width100}>
-                            <Text style={globalCSS.text_center}>No hostels found</Text>
-                        </View>
-                        : 
                         <></>
                 }
             </View>

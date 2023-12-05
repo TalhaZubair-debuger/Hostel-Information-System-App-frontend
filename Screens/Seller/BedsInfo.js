@@ -1,227 +1,118 @@
-import { Image, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { useFocusEffect } from '@react-navigation/native';
+import HostName from '../../utils/HostName';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import { FlatList } from 'react-native';
+import Bed from './Bed';
 
-const BedsInfo = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalInfoVisible, setModalInfoVisible] = useState(false);
-  const [hosteliteName, setHosteliteName] = useState("");
-  const [hosteliteContact, setHosteliteContact] = useState("");
-  const navigateToHostel = () => {
-    navigation.navigate("Seller Hostel")
+
+const BedsInfo = ({ navigation, route }) => {
+  const [bedsData, setBedsData] = useState();
+  const [change, setChange] = useState(false);
+  const { id } = route.params;
+
+  useFocusEffect(
+    useCallback(() => {
+      getHostelsBeds();
+    }, [change])
+  )
+
+  const getHostelsBeds = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}hostel-beds/get-bed-records/${id}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data) {
+        console.log(data);
+        setBedsData(data.Beds);
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
   }
+
   return (
     <View>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <Text style={globalCSS.font15}>Add Bed Info</Text>
-          <View style={styles.width100}>
-            <Text style={globalCSS.font15NonBold}>
-              Hotelite Name
-            </Text>
-            <TextInput
-              placeholder="Name"
-              style={globalCSS.inputStyle3}
-              value={hosteliteName}
-              onChangeText={(newValue) => setHosteliteName(newValue)}
-            />
-          </View>
-          <View style={styles.width100}>
-            <Text style={globalCSS.font15NonBold}>
-              Hotelite Contact
-            </Text>
-            <TextInput
-              placeholder="03000000000"
-              style={globalCSS.inputStyle3}
-              value={hosteliteContact}
-              onChangeText={(newValue) => setHosteliteContact(newValue)}
-            />
-          </View>
-          <Pressable
-            style={[styles.bedInfoModalBtn, globalCSS.bgcOne]}
-            onPress={() => setModalVisible(!modalVisible)}>
-            <Text style={[styles.textStyle]}>Add Bed Information</Text>
-          </Pressable>
-
-          <Pressable
-            style={[styles.bedInfoModalBtn, globalCSS.bgcZero]}
-            onPress={() => setModalVisible(!modalVisible)}>
-            <Text style={[styles.textStyle]}>Cancel</Text>
-          </Pressable>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalInfoVisible}
-        onRequestClose={() => {
-          setModalInfoVisible(!modalInfoVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <Text style={globalCSS.font20}>Bed Info</Text>
-
-          <View style={styles.modalInfo}>
-            <View>
-              <Text>
-                <Text style={styles.bold}>
-                  Hostelite Name:
-                </Text>
-                Zain
-              </Text>
-
-              <Text>
-                <Text style={styles.bold}>
-                  Hostelite Contact:
-                </Text>
-                0300000000
-              </Text>
-
-              <Text>
-                <Text style={styles.bold}>
-                  Rent Amount:
-                </Text>
-                Rs.7500
-              </Text>
-
-              <Text>
-                <Text style={styles.bold}>
-                  Due Date:
-                </Text>
-                31st Oct, 23
-              </Text>
-
-              <Text>
-                <Text style={styles.bold}>
-                  Previous Dues:
-                </Text>
-                Clear
-              </Text>
-            </View>
-          </View>
-
-          <Pressable
-            style={[styles.bedMsgModalBtn, globalCSS.bgcOne]}
-            onPress={() => setModalInfoVisible(!modalInfoVisible)}>
-            <Text style={[styles.textStyle]}>Message hostelite</Text>
-          </Pressable>
-
-          <Pressable
-            style={[styles.bedInfoModalBtn, globalCSS.bgcZero]}
-            onPress={() => setModalInfoVisible(!modalInfoVisible)}>
-            <Text style={[styles.textStyle]}>Close</Text>
-          </Pressable>
-        </View>
-      </Modal>
 
       <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-        <Pressable onPress={navigateToHostel}>
+        <Pressable onPress={() => { navigation.navigate("Seller Hostel", { id: id }) }}>
           <Text style={globalCSS.font20}>
             <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
           </Text>
         </Pressable>
       </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.heading}>
+            <Text style={globalCSS.font20}>Beds Management</Text>
+          </View>
 
-      <View style={styles.container}>
-        <View style={styles.heading}>
-          <Text style={globalCSS.font20}>Beds Management</Text>
-        </View>
-
-        <View style={[styles.row, globalCSS.bgcZero]}>
+          <View style={[styles.row, globalCSS.bgcZero]}>
           <View style={styles.item}>
-            <View style={styles.grey}></View>
-            <Text style={styles.mt_10}>Unallocated</Text>
+              <View style={styles.lightgrey}></View>
+              <Text style={styles.mt_10}>This background for pre-occupied beds</Text>
+            </View>
           </View>
-          <View style={styles.item}>
-            <View style={styles.red}></View>
-            <Text style={styles.mt_10}>Dues Pending</Text>
+
+          <View style={[styles.row, globalCSS.bgcZero]}>
+            <View style={styles.item}>
+              <View style={styles.grey}></View>
+              <Text style={styles.mt_10}>Unoccupied</Text>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.red}></View>
+              <Text style={styles.mt_10}>Dues Pending</Text>
+            </View>
+            <View style={styles.item}>
+              <View style={styles.green}></View>
+              <Text style={styles.mt_10}>Dues Cleared</Text>
+            </View>
           </View>
-          <View style={styles.item}>
-            <View style={styles.green}></View>
-            <Text style={styles.mt_10}>Dues Cleared</Text>
+
+          <View >
+            {
+              bedsData ?
+                bedsData.length ?
+                  <FlatList
+                    data={bedsData}
+                    numColumns={5}
+                    renderItem={({ item }) => (
+                      <Bed
+                        hostelId={item.hostelId}
+                        hosteliteName={item.hosteliteName}
+                        contact={item.contact}
+                        id={item._id}
+                        rentAmont={item.rentAmont}
+                        dueDate={item.dueDate}
+                        previousDues={item.previousDues}
+                        preOccupied={item.preOccupied}
+                        occupied={item.occupied}
+                        occupantId={item.occupantId}
+                        setChange={setChange}
+                      />
+                    )}
+                    keyExtractor={(item) => item._id.toString()}
+                  />
+                  :
+                  <View style={styles.width100}>
+                    <Text style={globalCSS.text_center}>No Beds data found</Text>
+                  </View>
+                :
+                <></>
+            }
           </View>
         </View>
-
-        <Text style={globalCSS.font15}>Pre-Occupied Beds</Text>
-        <View style={styles.preOccupiedBeds}>
-          <View style={styles.grid}>
-            <Pressable onPress={() => setModalVisible(!modalVisible)}>
-              <View style={[styles.bed, styles.greyBed]}>
-                <FontAwesome5 name={"bed"} size={20} color={"grey"} />
-              </View>
-            </Pressable>
-
-            <Pressable onPress={() => setModalInfoVisible(!modalInfoVisible)}>
-              <View style={[styles.bed, styles.greyBed]}>
-                <FontAwesome5 name={"bed"} size={20} color={"grey"} />
-              </View>
-            </Pressable>
-
-            <View style={[styles.bed, styles.greyBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"grey"} />
-            </View>
-            <View style={[styles.bed, styles.greyBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"grey"} />
-            </View>
-            <View style={[styles.bed, styles.greyBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"grey"} />
-            </View>
-          </View>
-        </View>
-
-        <Text style={globalCSS.font15}>Occupied Beds</Text>
-        <View style={styles.occupiedBeds}>
-          <View style={styles.grid}>
-            <Pressable onPress={() => setModalInfoVisible(!modalInfoVisible)}>
-              <View style={[styles.bed, styles.greenBed]}>
-                <FontAwesome5 name={"bed"} size={20} color={"red"} />
-              </View>
-            </Pressable>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"red"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"red"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"red"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"red"} />
-            </View>
-          </View>
-        </View>
-
-        <Text style={globalCSS.font15}>Vacant Beds</Text>
-        <View style={styles.availableBeds}>
-          <View style={styles.grid}>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"lightgreen"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"lightgreen"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"lightgreen"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"lightgreen"} />
-            </View>
-            <View style={[styles.bed, styles.greenBed]}>
-              <FontAwesome5 name={"bed"} size={20} color={"lightgreen"} />
-            </View>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   )
 }
@@ -240,8 +131,8 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "column",
-    marginTop: 10
+    paddingVertical: 50,
+    maxHeight: "100%"
   },
   preOccupiedBeds: {
     margin: 5
@@ -314,6 +205,11 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     backgroundColor: "grey"
+  },
+  lightgrey: {
+    width: 10,
+    height: 10,
+    backgroundColor: "lightgrey"
   },
   red: {
     width: 10,
