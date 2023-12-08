@@ -6,13 +6,15 @@ import hostelOneImage from "../../assets/images/hostelOne.jpg";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HostName from '../../utils/HostName';
 import { useFocusEffect } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native';
+import { useStripe } from "@stripe/stripe-react-native";
 
 
 
 const Booking = ({ navigation, route }) => {
-    const { id } = route.params;
+    const { id, setStripeKey } = route.params;
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [hostel, setHostel] = useState();
-    const [images, setImages] = useState();
     useFocusEffect(
         useCallback(() => {
             getHostels();
@@ -30,9 +32,73 @@ const Booking = ({ navigation, route }) => {
             const data = await response.json();
             if (data.hostel) {
                 setHostel(data.hostel)
+                setStripeKey(data.hostel.publishableKey);
             }
         } catch (error) {
             Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
+
+    const handleMakePayment = async () => {
+        const amount = hostel.rent;
+        const formData = {
+            amount: Math.floor(amount * 100)
+        }
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostel-beds/make-payment/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${jwtToken}`
+                },
+                method: "POST",
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+            if (data) {
+                console.log(data);
+            }
+            const initResponse = await initPaymentSheet({
+                merchantDisplayName: "Test Name",
+                paymentIntentClientSecret: data.paymentIntent
+            })
+            if (initResponse.error) {
+                console.log(initResponse.error)
+                Alert.alert("Something went wrong!");
+                return;
+            }
+            const paymentReponse = await presentPaymentSheet();
+            if (paymentReponse.error) {
+                Alert.alert(`Error code: ${paymentReponse.error.code}`, paymentReponse.error.message);
+                return;
+            }
+            else {
+                handleBookABed();
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
+
+    const handleBookABed = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostel-beds/book-bed/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${jwtToken}`
+                },
+                method: "POST"
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Success", `${data.message}`);
+                navigation.navigate("BottomTabs");
+            }
+        } catch (error) {
+            Alert.alert("Failed!", `${error.message}`);
             console.log(error);
         }
     }
@@ -79,11 +145,11 @@ const Booking = ({ navigation, route }) => {
                 </View>
 
                 <View style={styles.row}>
-                    <Pressable style={[styles.btnProceedToPay, globalCSS.bgcOne]}>
+                    <TouchableOpacity onPress={handleMakePayment} style={[styles.btnProceedToPay, globalCSS.bgcOne]}>
                         <Text>
                             Proceed to Pay
                         </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>

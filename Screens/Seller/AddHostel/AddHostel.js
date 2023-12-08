@@ -21,8 +21,11 @@ const AddHostel = ({ navigation }) => {
   const [facilities, setFacilities] = useState("Room Only");
   const [city, setCity] = useState("");
   const [university, setUniversity] = useState("");
+  const [privateKey, setPrivateKey] = useState("");
+  const [publishableKey, setPublishableKey] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [onlinePaymentmodalVisible, setOnlinePaymentmodalVisible] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,7 +56,9 @@ const AddHostel = ({ navigation }) => {
       occupiedBeds === null ||
       vacantBeds === null ||
       university === "" ||
-      facilities === ""
+      facilities === "" ||
+      publishableKey === "" || 
+      privateKey === ""
     ) {
       Alert.alert("Failure", "Please fill form completely");
     } else {
@@ -68,7 +73,9 @@ const AddHostel = ({ navigation }) => {
         vacantBeds,
         facilities,
         city,
-        university
+        university,
+        publishableKey,
+        privateKey
       };
 
       try {
@@ -105,6 +112,51 @@ const AddHostel = ({ navigation }) => {
   return (
     <ScrollView>
       <View>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={onlinePaymentmodalVisible}
+          onRequestClose={() => {
+            setOnlinePaymentmodalVisible(!onlinePaymentmodalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+
+            <View style={styles.row}>
+              <View style={styles.width100}>
+                <Text style={globalCSS.font15NonBold}>
+                  Stripe Publishable Key
+                </Text>
+                <TextInput
+                  placeholder="Stripe Publishable Key"
+                  style={globalCSS.inputStyle3}
+                  value={publishableKey}
+                  onChangeText={(newValue) => setPublishableKey(newValue)}
+                />
+              </View>
+            </View>
+            <View style={styles.row}>
+              <View style={styles.width100}>
+                <Text style={globalCSS.font15NonBold}>
+                  Stripe Private Key
+                </Text>
+                <TextInput
+                  placeholder="Stripe Private Key"
+                  style={globalCSS.inputStyle3}
+                  value={privateKey}
+                  onChangeText={(newValue) => setPrivateKey(newValue)}
+                />
+              </View>
+            </View>
+            <Pressable
+              style={[styles.applyFilterBtn, globalCSS.bgcOne]}
+              onPress={() => setOnlinePaymentmodalVisible(!onlinePaymentmodalVisible)}>
+              <Text style={[styles.textStyle]}>Add Payment Info</Text>
+            </Pressable>
+          </View>
+        </Modal>
+
         <Modal
           animationType="fade"
           transparent={true}
@@ -310,6 +362,15 @@ const AddHostel = ({ navigation }) => {
               />
             </View>
           </View>
+          <View style={[styles.row, styles.mt10]}>
+            <View style={styles.width100}>
+              <Pressable
+                onPress={() => setOnlinePaymentmodalVisible(!onlinePaymentmodalVisible)}
+                style={[styles.btn, globalCSS.bgcOne]}>
+                <Text style={globalCSS.font15NonBold}>Online Payment Integration</Text>
+              </Pressable>
+            </View>
+          </View>
 
           <View style={[styles.row, styles.mt10]}>
             <View style={styles.width100}>
@@ -402,7 +463,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 5,
     fontSize: 15,
-    width: 100,
+    width: 150,
     height: 40,
     textAlign: "center",
     justifyContent: "center",

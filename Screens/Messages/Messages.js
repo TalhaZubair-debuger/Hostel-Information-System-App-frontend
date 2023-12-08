@@ -1,5 +1,5 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import hostelOneImage from "../../assets/images/hostelOne.jpg";
@@ -7,8 +7,17 @@ import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
 import hostelThreeImage from "../../assets/images/hostelThree.jpg";
 import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import VerticalListMessage from '../../utils/VerticalListMessage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const Messages = ({ navigation }) => {
+
+
+const Messages = ({ navigation, route }) => {
+    const { userId, ownerId } = route.params;
+
+    useFocusEffect(
+        useCallback(() => {
+        }, [])
+      )
     const DATA = [
         {
             id: 1,

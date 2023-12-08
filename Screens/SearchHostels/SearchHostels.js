@@ -1,6 +1,6 @@
 import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import globalCSS from "../../utils/GlobalCSS";
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import VerticalList from '../../utils/VerticalList';
 import { Picker } from '@react-native-picker/picker';
@@ -10,7 +10,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Alert } from 'react-native';
 
 
-const SearchHostels = ({ navigation }) => {
+const SearchHostels = ({ navigation, route }) => {
+    const { City = 'DefaultCity' } = route.params ? route.params : {};
     const [modalVisible, setModalVisible] = useState(false);
     const [city, setCity] = useState("");
     const [roomSize, setRoomSize] = useState("");
@@ -23,8 +24,14 @@ const SearchHostels = ({ navigation }) => {
     const [hostels, setHostels] = useState();
     useFocusEffect(
         useCallback(() => {
-            getHostels();
-        }, [favorite])
+            if (City && City !== 'DefaultCity') {
+                setCity(City);
+                handleSearch();
+            }
+            else {
+                getHostels();
+            }
+        }, [favorite, City])
     )
     const getHostels = async () => {
         try {
@@ -60,10 +67,11 @@ const SearchHostels = ({ navigation }) => {
         setModalVisible(true);
     }
     const handleSearch = async () => {
-        if (city !== "" && roomSize === "" && facilities === "" && bedsInRoom === "" && university === "") {
+        if (city ? city : City && roomSize === "" && facilities === "" && bedsInRoom === "" && university === "") {
+            console.log(city);
             try {
                 const jwtToken = await AsyncStorage.getItem("jwtToken");
-                const response = await fetch(`${HostName}hostels/hostels-city?city=${city}`, {
+                const response = await fetch(`${HostName}hostels/hostels-city?city=${city ? city : City}`, {
                     method: "GET",
                     headers: {
                         'Authorization': `${jwtToken}`
@@ -72,10 +80,14 @@ const SearchHostels = ({ navigation }) => {
                 const data = await response.json();
                 if (data.hostels) {
                     setHostels(data.hostels)
-                    console.log(data.hostels)
+                    setCity("");
+                }
+                else {
+                    Alert.alert("Alert!", `${data.message}`);
+                    setCity("");
                 }
             } catch (error) {
-                Alert.alert("Failed to search!", `${error.message}`);
+                Alert.alert("Alert!", `${error.message}`);
                 console.log(error);
             }
         }
@@ -92,6 +104,7 @@ const SearchHostels = ({ navigation }) => {
                 const data = await response.json();
                 if (data.hostels) {
                     setHostels(data.hostels)
+                    setCity("");
                 }
             } catch (error) {
                 Alert.alert("Failed to search!", `${error.message}`);
@@ -99,8 +112,8 @@ const SearchHostels = ({ navigation }) => {
             }
         }
         else {
-            Alert.alert("Failed to search!", `The search paramaters provided are wrong. You can either search through city 
-            filter or by applying all filters together.`);
+            console.log("The city is: ", city);
+            Alert.alert("Failed to search!", `The search paramaters provided are wrong. You can either search through city filter or by applying all filters together.`);
         }
     }
     return (

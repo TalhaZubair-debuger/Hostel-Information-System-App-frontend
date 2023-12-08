@@ -2,8 +2,6 @@ import { Alert, FlatList, ScrollView, StyleSheet, Text, View } from 'react-nativ
 import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import hostelOneImage from "../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
 import VerticalList from '../../utils/VerticalList';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,20 +44,6 @@ const Favorites = ({ navigation }) => {
       console.log(error);
     }
   }
-  const DATA = [
-    {
-      id: 1,
-      image: hostelOneImage,
-      metaDesc: "Its the best hostel under best price",
-      rent: "7000"
-    },
-    {
-      id: 2,
-      image: hostelTwoImage,
-      metaDesc: "Its the best 2 bed hostel with study tables",
-      rent: "11000"
-    }
-  ]
   return (
     <ScrollView>
       <View>

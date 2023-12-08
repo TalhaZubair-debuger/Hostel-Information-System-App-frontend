@@ -60,6 +60,26 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
             }
         }
     }
+    const handleDeleteHostel = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostel-beds/delete-bed/${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Alert!", `${data.message}`);
+                setChange(true);
+                setModalInfoVisible(!modalInfoVisible);
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
     return (
         <View>
             <Modal
@@ -181,7 +201,7 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
 
                                 <Pressable
                                     style={[styles.bedMsgModalBtn, styles.redBgc]}
-                                    onPress={() => setModalInfoVisible(!modalInfoVisible)}>
+                                    onPress={handleDeleteHostel}>
                                     <Text style={[styles.textStyle]}>Remove hostelite</Text>
                                 </Pressable>
 

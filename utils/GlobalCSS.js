@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
     },
+    rowNonCenter: {
+        flexDirection: "row",
+    },
     text_center: {
         textAlign: "center",
         justifyContent: "center",

@@ -17,6 +17,10 @@ import AddHostel from "./Screens/Seller/AddHostel/AddHostel";
 import SellerHostel from './Screens/Seller/SellerHostel/SellerHostel';
 import BedsInfo from './Screens/Seller/BedsInfo';
 import Booking from './Screens/Booking/Booking';
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { useState } from 'react';
+import YourHostel from './Screens/YourHostel/YourHostel';
+import ForgotPassword from './Screens/ForgotPassword/ForgotPassword';
 
 const HomeBottomTabs = createMaterialBottomTabNavigator();
 
@@ -79,38 +83,51 @@ const SellerBottomTabs = () => {
   )
 }
 const UserStack = createStackNavigator();
+
 function UserStackTabs() {
+  const [stripeKey, setStripeKey] = useState("");
   return (
-    <UserStack.Navigator>
-      <UserStack.Screen
-        name="BottomTabs"
-        component={BottomTabs}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <UserStack.Screen
-        name="Search Hostels"
-        component={SearchHostels}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <UserStack.Screen
-        name="Hostel"
-        component={UserHostel}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <UserStack.Screen
-        name="Booking"
-        component={Booking}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </UserStack.Navigator>
+    <StripeProvider publishableKey={stripeKey ? stripeKey : null}>
+      <UserStack.Navigator>
+        <UserStack.Screen
+          name="BottomTabs"
+          component={BottomTabs}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <UserStack.Screen
+          name="Search Hostels"
+          component={SearchHostels}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <UserStack.Screen
+          name="Hostel"
+          component={UserHostel}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <UserStack.Screen
+          name="Booking"
+          component={Booking}
+          initialParams={{ setStripeKey: setStripeKey }}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <UserStack.Screen
+          name="Your Hostel"
+          component={YourHostel}
+          initialParams={{ setStripeKey: setStripeKey }}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </UserStack.Navigator>
+    </StripeProvider>
   )
 }
 const SellerStack = createStackNavigator();
@@ -168,6 +185,13 @@ export default function App() {
           }}
         />
         <RootStack.Screen
+          name="Forgot Password"
+          component={ForgotPassword}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <RootStack.Screen
           name="Messages"
           component={Messages}
           options={{
@@ -195,13 +219,6 @@ export default function App() {
             headerShown: false,
           }}
         />
-        {/* <RootStack.Screen
-          name="BottomTabs"
-          component={BottomTabs}
-          options={{
-            headerShown: false,
-          }}
-        /> */}
       </RootStack.Navigator>
     </NavigationContainer>
   );

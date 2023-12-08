@@ -9,14 +9,17 @@ import HostName from '../../utils/HostName';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import axios from 'axios';
+import { TouchableOpacity } from 'react-native';
 
 const Home = ({ navigation }) => {
   const [hostels, setHostels] = useState();
+  const [user, setUser] = useState();
   const [searchLocation, setSearchLocation] = useState("");
   const [city, setCity] = useState("");
   useFocusEffect(
     useCallback(() => {
       getHostels();
+      getUser();
     }, [])
   )
   const getHostels = async () => {
@@ -31,6 +34,24 @@ const Home = ({ navigation }) => {
       const data = await response.json();
       if (data.hostels) {
         setHostels(data.hostels)
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
+  }
+  const getUser = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}users/get-user`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user)
       }
     } catch (error) {
       Alert.alert("Failed to fetch!", `${error.message}`);
@@ -68,14 +89,29 @@ const Home = ({ navigation }) => {
       }
     }
   }
+
+  const logOut = async () => {
+    await AsyncStorage.removeItem("jwtToken");
+    navigation.navigate("Login");
+  }
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
+        <Pressable onPress={logOut}>
+            <View style={globalCSS.center_vertical}>
+              <Text >
+                <FontAwesome5 name={"sign-out-alt"} size={25} color={"black"} />
+              </Text>
+              <Text style={globalCSS.fontNonBold12}>
+                Logout
+              </Text>
+            </View>
+          </Pressable>
           <Text style={globalCSS.font20}>
-            Hi Muhammad,
+            Hi {user ? user.name : "there"}!
           </Text>
-          <Pressable onPress={() => { navigation.navigate("Messages") }}>
+          <Pressable onPress={() => { navigation.navigate("Messages", { userId: user.userId, ownerId: hostels.ownerId }) }}>
             <View style={globalCSS.center_vertical}>
               <Text >
                 <FontAwesome5 name={"comment"} size={25} color={"black"} />
@@ -90,21 +126,15 @@ const Home = ({ navigation }) => {
           <View style={styles.top_row}>
             <TextInput
               placeholder="Search City"
-              style={globalCSS.inputStyle3}
-              value={searchLocation}
-              onChangeText={(newValue) => setSearchLocation(newValue)}
-            />
-          </View>
-          <View style={styles.top_row}>
-            <TextInput
-              placeholder="Search Area"
               style={globalCSS.inputStyle2}
-              value={searchLocation}
-              onChangeText={(newValue) => setSearchLocation(newValue)}
+              value={city}
+              onChangeText={(newValue) => setCity(newValue)}
             />
-            <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
-              <FontAwesome5 name={"search"} size={20} color={"black"} />
-            </Text>
+            <TouchableOpacity onPress={()=>{navigation.navigate("Search Hostels", { City: city });}}>
+              <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
+                <FontAwesome5 name={"search"} size={20} color={"black"} />
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -145,9 +175,9 @@ const Home = ({ navigation }) => {
         </View>
 
         <View>
-          <Pressable style={[styles.btnYourHostel, globalCSS.bgcOne]}>
+          <TouchableOpacity onPress={() => { navigation.navigate("Your Hostel", { userId: user._id }) }} style={[styles.btnYourHostel, globalCSS.bgcOne]}>
             <Text style={globalCSS.font15}>Your Hostel</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <Text style={[globalCSS.font20, globalCSS.text_center]}>
@@ -182,11 +212,7 @@ export default Home
 
 const styles = StyleSheet.create({
   search_bar: {
-    // flex: 1,
-    // flexDirection: "row",
-    // justifyContent: "space-evenly",
-    // alignItems: "center",
-    height: 100,
+    height: 50,
     padding: 5
   },
   top_row_one: {

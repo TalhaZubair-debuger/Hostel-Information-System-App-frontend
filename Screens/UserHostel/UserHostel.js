@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, TextInput, View, Dimensions, ScrollView } from 'react-native'
+import { Pressable, StyleSheet, Text, TextInput, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useCallback, useRef, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -21,6 +21,7 @@ const UserHostel = ({ navigation, route }) => {
     const [imageIndex, setImageIndex] = useState(0);
     const [hostel, setHostel] = useState();
     const [images, setImages] = useState();
+    const [userId, setUserId] = useState();
     useFocusEffect(
         useCallback(() => {
             getHostels();
@@ -29,7 +30,7 @@ const UserHostel = ({ navigation, route }) => {
     const getHostels = async () => {
         try {
             const jwtToken = await AsyncStorage.getItem("jwtToken");
-            const response = await fetch(`${HostName}hostels/hostel-user/${id}`, {
+            const response = await fetch(`${HostName}hostels/hostel-user/${id}`, {//<-- Hostel Id
                 method: "GET",
                 headers: {
                     'Authorization': `${jwtToken}`
@@ -57,32 +58,35 @@ const UserHostel = ({ navigation, route }) => {
         }
     }
 
+    const handleNavigateToMessages = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}users/get-hostel-owner-user/${hostel.owner}`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.ownerId) {
+                navigation.navigate("Message", { userId: data.userId, ownerId: data.ownerId })
+                setUserId(data.userId)
+            }
+            else {
+                Alert.alert("Failed to fetch!", `Unknown error occurred`);
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
+        }
+    }
 
-    const DATA = [
-        {
-            id: 1,
-            image: hostelOneImage
-        },
-        {
-            id: 2,
-            image: hostelTwoImage
-        },
-        {
-            id: 3,
-            image: hostelThreeImage
-        },
-        {
-            id: 4,
-            image: hostelFourImage
-        },
-    ];
     const navigateToHome = () => {
         navigation.navigate("BottomTabs");
     }
     const handleNavigateToBookingPage = () => {
         navigation.navigate("Booking", { id: hostel._id });
     }
-
 
     return (
         <View style={styles.TopContainer}>
@@ -315,14 +319,24 @@ const UserHostel = ({ navigation, route }) => {
                     </View>
                 </View>
             </ScrollView>
-            <View style={[styles.contactFixed, globalCSS.bgcTwo]}>
-                <View>
-                    <FontAwesome5 name={"comment"} size={25} color={"#000"} />
-                </View>
-                <View>
-                    <Text style={globalCSS.font15NonBold}>{" "}Message Seller{" "}</Text>
-                </View>
-            </View>
+            {
+                hostel ?
+                    userId !== hostel.owner ?
+                        <TouchableOpacity onPress={handleNavigateToMessages}>
+                            <View style={[styles.contactFixed, globalCSS.bgcTwo]}>
+                                <View>
+                                    <FontAwesome5 name={"comment"} size={25} color={"#000"} />
+                                </View>
+                                <View>
+                                    <Text style={globalCSS.font15NonBold}>{" "}Message Seller{" "}</Text>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                        :
+                        <></>
+                    :
+                    <></>
+            }
         </View>
     )
 }

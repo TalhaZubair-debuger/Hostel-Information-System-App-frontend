@@ -6,13 +6,14 @@ import HostName from '../../utils/HostName';
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [contact, setContact] = useState(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
 
   const handleSignUp = () => {
-    if (!email || !password || !name || !confirmPassword) {
+    if (!email || !password || !contact || !name || !confirmPassword) {
       setError("Fill all fields");
       return;
     }
@@ -29,6 +30,7 @@ const SignUp = ({ navigation }) => {
       body: JSON.stringify({
         email,
         name,
+        contact,
         password,
         confirmPassword
       }),
@@ -69,6 +71,13 @@ const SignUp = ({ navigation }) => {
           style={globalCSS.inputStyle1}
           value={name}
           onChangeText={(newValue) => setName(newValue)}
+        />
+        <TextInput
+          placeholder="Conact"
+          style={globalCSS.inputStyle1}
+          keyboardType="number-pad"
+          value={contact}
+          onChangeText={(newValue) => setContact(newValue)}
         />
         <TextInput
           placeholder="Password"
