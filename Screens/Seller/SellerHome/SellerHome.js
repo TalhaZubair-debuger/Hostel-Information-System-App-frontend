@@ -83,9 +83,9 @@ const SellerHome = ({ navigation }) => {
         </View>
 
         <View style={globalCSS.row}>
-          <Pressable onPress={navigateToAddHostel} style={[styles.add_btn, globalCSS.bgcOne]}>
+          <Pressable onPress={navigateToAddHostel} style={[styles.add_btn, globalCSS.bgcTwo]}>
             <FontAwesome5 name={"plus"} size={25} color={"#FFF"} />
-            <Text style={[styles.add_btn_text, globalCSS.font20]}>Add new hostel</Text>
+            <Text style={[styles.add_btn_text, globalCSS.font20, globalCSS.colorWhite]}>Add new hostel</Text>
           </Pressable>
         </View>
 

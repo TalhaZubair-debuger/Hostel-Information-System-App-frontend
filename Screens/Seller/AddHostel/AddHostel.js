@@ -325,11 +325,11 @@ const AddHostel = ({ navigation }) => {
                   selectedValue={facilities}
                   onValueChange={(facilities) => setFacilities(facilities)}
                 >
-                  <Picker.Item label="Room Only" value="Room Only" />
-                  <Picker.Item label="Room + Bath" value="Room + Bath" />
-                  <Picker.Item label="Room + Bath + Kitchen" value="Room + Bath + Kitchen" />
-                  <Picker.Item label="Room + Bath + Wifi" value="Room + Bath + Wifi" />
-                  <Picker.Item label="Room + Bath + Kitchen + Wifi" value="Room + Bath + Kitchen + Wifi" />
+                  <Picker.Item label="Room Only" value="RoomOnly" />
+                  <Picker.Item label="Room + Bath" value="RoomBath" />
+                  <Picker.Item label="Room + Bath + Kitchen" value="RoomBathKitchen" />
+                  <Picker.Item label="Room + Bath + Wifi" value="RoomBathWifi" />
+                  <Picker.Item label="Room + Bath + Kitchen + Wifi" value="RoomBathKitchenWifi" />
                 </Picker>
               </View>
             </View>
@@ -364,6 +364,9 @@ const AddHostel = ({ navigation }) => {
           </View>
           <View style={[styles.row, styles.mt10]}>
             <View style={styles.width100}>
+            <Text style={globalCSS.font15NonBold}>
+                Opional:
+              </Text>
               <Pressable
                 onPress={() => setOnlinePaymentmodalVisible(!onlinePaymentmodalVisible)}
                 style={[styles.btn, globalCSS.bgcOne]}>

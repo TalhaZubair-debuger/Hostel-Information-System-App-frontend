@@ -54,6 +54,8 @@ const Login = ({ navigation }) => {
         const token = data.token;
         await AsyncStorage.setItem('jwtToken', `Bearer ${token}`);
         setError("");
+        setEmail("");
+        setPassword("");
         navigation.navigate("UserHome")
       }
       else {
@@ -87,6 +89,8 @@ const Login = ({ navigation }) => {
         await AsyncStorage.setItem('jwtToken', `Bearer-Owner ${token}`);
         console.log("Bearer-Owner " + token);
         setError("");
+        setEmail("");
+        setPassword("");
         navigation.navigate("SellerHome")
       }
       else {
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 5,
     borderRadius: 5,
-    borderColor: "#00D2FF",
+    borderColor: "#BF40BF",
     borderWidth: 2,
     shadowRadius: 5,
     shadowColor: "black",

@@ -45,7 +45,7 @@ const BottomTabs = () => {
       inactiveColor="#fff"
       shifting={true}
       labeled={false}
-      barStyle={{ backgroundColor: "#00D2FF" }}
+      barStyle={{ backgroundColor: "#BF40BF" }}
     >
       <HomeBottomTabs.Screen name='Home' component={Home} />
       <HomeBottomTabs.Screen name='Favorites' component={Favorites} />
@@ -75,7 +75,7 @@ const SellerBottomTabs = () => {
       inactiveColor="#fff"
       shifting={true}
       labeled={false}
-      barStyle={{ backgroundColor: "#00D2FF" }}
+      barStyle={{ backgroundColor: "#BF40BF" }}
     >
       <SellerBottomTabsNavigator.Screen name='Seller Home' component={SellerHome} />
       <SellerBottomTabsNavigator.Screen name='Messages' component={Messages} />

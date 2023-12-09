@@ -103,12 +103,12 @@ const Home = ({ navigation }) => {
               <Text >
                 <FontAwesome5 name={"sign-out-alt"} size={25} color={"black"} />
               </Text>
-              <Text style={globalCSS.fontNonBold12}>
+              <Text style={[globalCSS.fontNonBold12]}>
                 Logout
               </Text>
             </View>
           </Pressable>
-          <Text style={globalCSS.font20}>
+          <Text style={[globalCSS.font20]}>
             Hi {user ? user.name : "there"}!
           </Text>
           <Pressable onPress={() => { navigation.navigate("Messages", { userId: user.userId, ownerId: hostels.ownerId }) }}>
@@ -116,7 +116,7 @@ const Home = ({ navigation }) => {
               <Text >
                 <FontAwesome5 name={"comment"} size={25} color={"black"} />
               </Text>
-              <Text style={globalCSS.fontNonBold12}>
+              <Text style={[globalCSS.fontNonBold12]}>
                 Messages
               </Text>
             </View>
@@ -132,7 +132,7 @@ const Home = ({ navigation }) => {
             />
             <TouchableOpacity onPress={()=>{navigation.navigate("Search Hostels", { City: city });}}>
               <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
-                <FontAwesome5 name={"search"} size={20} color={"black"} />
+                <FontAwesome5 name={"search"} size={20} color={"white"} />
               </Text>
             </TouchableOpacity>
           </View>
@@ -145,7 +145,7 @@ const Home = ({ navigation }) => {
           <View style={styles.box}>
             <Pressable onPress={() => { navigation.navigate("Search Hostels") }}>
               <Text style={[globalCSS.text_center]}>
-                <FontAwesome5 name={"hotel"} size={25} color={"#00D2FF"} />
+                <FontAwesome5 name={"hotel"} size={25} color={"#BF40BF"} />
               </Text>
               <Text style={[globalCSS.text_center]}>
                 Browse all hostels
@@ -155,7 +155,7 @@ const Home = ({ navigation }) => {
           <View style={styles.box}>
             <Pressable onPress={() => { navigation.navigate("Search Hostels") }}>
               <Text style={[globalCSS.text_center]}>
-                <FontAwesome5 name={"hourglass"} size={25} color={"#00D2FF"} />
+                <FontAwesome5 name={"hourglass"} size={25} color={"#BF40BF"} />
               </Text>
               <Text style={[globalCSS.text_center]}>
                 Browse newly listed hostels
@@ -165,7 +165,7 @@ const Home = ({ navigation }) => {
           <View style={styles.box}>
             <Pressable onPress={getLocationAndNavigate}>
               <Text style={[globalCSS.text_center]}>
-                <FontAwesome5 name={"map-marker-alt"} size={25} color={"#00D2FF"} />
+                <FontAwesome5 name={"map-marker-alt"} size={25} color={"#BF40BF"} />
               </Text>
               <Text style={[globalCSS.text_center]}>
                 Browse hostels near you
@@ -175,8 +175,8 @@ const Home = ({ navigation }) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => { navigation.navigate("Your Hostel", { userId: user._id }) }} style={[styles.btnYourHostel, globalCSS.bgcOne]}>
-            <Text style={globalCSS.font15}>Your Hostel</Text>
+          <TouchableOpacity onPress={() => { navigation.navigate("Your Hostel", { userId: user._id }) }} style={[styles.btnYourHostel, globalCSS.bgcTwo]}>
+            <Text style={[globalCSS.font15, globalCSS.colorWhite]}>Your Hostel</Text>
           </TouchableOpacity>
         </View>
 

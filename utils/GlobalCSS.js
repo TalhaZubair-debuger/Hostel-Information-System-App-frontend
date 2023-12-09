@@ -5,10 +5,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#F3F3F3"
     },
     bgcOne: {
-        backgroundColor: "#50E0FF"
+        backgroundColor: "#CBC3E3"
     },
     bgcTwo: {
-        backgroundColor: "#00D2FF",
+        backgroundColor: "#BF40BF",
+    },
+    colorWhite:{
+        color:"#fff"
     },
     font: {
         fontFamily: "Open Sans"
@@ -46,6 +49,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 5,
         backfaceVisibility:"visible"
+    },
+    inputStyle5: {
+        width: "40%",
+        height: 40,
+        borderWidth: 2,
+        borderColor: "black",
+        borderRadius: 5,
+        padding: 5,
+        margin: "auto",
+        justifyContent:"center",
+        alignItems:"center"
     },
     font25: {
         fontSize: 25,

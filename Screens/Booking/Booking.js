@@ -106,19 +106,6 @@ const Booking = ({ navigation, route }) => {
     return (
         <View>
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-                <Pressable onPress={() => { navigation.navigate("Hostel", { id: id }) }}>
-                    <Text>
-                        <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
-                    </Text>
-                </Pressable>
-                <View style={globalCSS.center_vertical}>
-                    <Text >
-                        <FontAwesome5 name={"comment"} size={25} color={"black"} />
-                    </Text>
-                    <Text style={globalCSS.fontNonBold12}>
-                        Messages
-                    </Text>
-                </View>
             </View>
 
             <View style={styles.container}>
@@ -145,8 +132,8 @@ const Booking = ({ navigation, route }) => {
                 </View>
 
                 <View style={styles.row}>
-                    <TouchableOpacity onPress={handleMakePayment} style={[styles.btnProceedToPay, globalCSS.bgcOne]}>
-                        <Text>
+                    <TouchableOpacity onPress={handleMakePayment} style={[styles.btnProceedToPay, globalCSS.bgcTwo]}>
+                        <Text style={globalCSS.colorWhite}>
                             Proceed to Pay
                         </Text>
                     </TouchableOpacity>

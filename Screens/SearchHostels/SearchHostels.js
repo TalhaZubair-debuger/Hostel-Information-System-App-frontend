@@ -200,29 +200,16 @@ const SearchHostels = ({ navigation, route }) => {
                         </View>
                     </View>
                     <Pressable
-                        style={[styles.applyFilterBtn, globalCSS.bgcOne]}
+                        style={[styles.applyFilterBtn, globalCSS.bgcTwo]}
                         onPress={() => setModalVisible(!modalVisible)}>
-                        <Text style={[styles.textStyle]}>Apply Filters</Text>
+                        <Text style={[styles.textStyle, globalCSS.colorWhite]}>Apply Filters</Text>
                     </Pressable>
                 </View>
             </Modal>
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-                <Pressable onPress={navigateBackToHome}>
-                    <Text>
-                        <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
-                    </Text>
-                </Pressable>
                 <Text style={globalCSS.font20}>
                     Search
                 </Text>
-                <View style={globalCSS.center_vertical}>
-                    <Text >
-                        <FontAwesome5 name={"comment"} size={25} color={"black"} />
-                    </Text>
-                    <Text style={globalCSS.fontNonBold12}>
-                        Messages
-                    </Text>
-                </View>
             </View>
             <View style={[styles.search_bar, globalCSS.bgcOne]}>
                 <View style={styles.top_row}>
@@ -235,14 +222,14 @@ const SearchHostels = ({ navigation, route }) => {
                 </View>
                 <View style={styles.top_row}>
                     <Pressable onPress={handleFilter}>
-                        <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
-                            <FontAwesome5 name={"filter"} size={20} color={"black"} />
+                        <Text style={[styles.margin_right, globalCSS.bgcTwo, globalCSS.colorWhite]}>
+                            <FontAwesome5 name={"filter"} size={20} color={"white"} />
                             Apply Search Filters
                         </Text>
                     </Pressable>
                     <TouchableOpacity onPress={handleSearch}>
-                        <Text style={[styles.margin_right, globalCSS.bgcTwo]}>
-                            <FontAwesome5 name={"search"} size={20} color={"black"} />
+                        <Text style={[styles.margin_right, globalCSS.bgcTwo, globalCSS.colorWhite]}>
+                            <FontAwesome5 name={"search"} size={20} color={"white"} />
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -290,7 +277,7 @@ const styles = StyleSheet.create({
     top_row_one: {
         // flex: 1,
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "flex-end",
         height: 100,
         padding: 5

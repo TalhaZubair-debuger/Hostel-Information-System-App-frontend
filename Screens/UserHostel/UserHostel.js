@@ -93,17 +93,9 @@ const UserHostel = ({ navigation, route }) => {
             <ScrollView style={styles.TopContainer}>
                 <View style={globalCSS.bgcZero}>
                     <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-                        <Pressable onPress={navigateToHome}>
-                            <Text>
-                                <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
-                            </Text>
-                        </Pressable>
                         <View style={globalCSS.center_vertical}>
-                            <Text >
-                                <FontAwesome5 name={"comment"} size={25} color={"black"} />
-                            </Text>
-                            <Text style={globalCSS.fontNonBold12}>
-                                Messages
+                            <Text style={[globalCSS.font20]}>
+                                Hostel
                             </Text>
                         </View>
                     </View>
@@ -140,8 +132,8 @@ const UserHostel = ({ navigation, route }) => {
                     </View>
 
                     <View style={styles.container}>
-                        <Pressable style={[styles.btnBookNow, globalCSS.bgcOne]} onPress={handleNavigateToBookingPage}>
-                            <Text style={globalCSS.font15}>Book a Bed</Text>
+                        <Pressable style={[styles.btnBookNow, globalCSS.bgcTwo]} onPress={handleNavigateToBookingPage}>
+                            <Text style={[globalCSS.font15, globalCSS.colorWhite]}>Book a Bed</Text>
                         </Pressable>
 
                         <View style={styles.description}>
@@ -156,7 +148,7 @@ const UserHostel = ({ navigation, route }) => {
                             <Text style={globalCSS.font20}>
                                 <FontAwesome5
                                     name={"map-marker-alt"}
-                                    size={25} color={"#00D2FF"}
+                                    size={25} color={"#BF40BF"}
                                 />
                                 {" "}Location
                             </Text>
@@ -193,19 +185,19 @@ const UserHostel = ({ navigation, route }) => {
                                         <View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Room
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Bathroom
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"utensils"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Kitchen
                                                     </Text>
@@ -213,7 +205,7 @@ const UserHostel = ({ navigation, route }) => {
                                             </View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"wifi"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Wifi
                                                     </Text>
@@ -227,19 +219,19 @@ const UserHostel = ({ navigation, route }) => {
                                         <View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Room
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Bathroom
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"wifi"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Wifi
                                                     </Text>
@@ -255,19 +247,19 @@ const UserHostel = ({ navigation, route }) => {
                                         <View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Room
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Bathroom
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"utensils"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Kitchen
                                                     </Text>
@@ -283,13 +275,13 @@ const UserHostel = ({ navigation, route }) => {
                                         <View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Room
                                                     </Text>
                                                 </View>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Bathroom
                                                     </Text>
@@ -305,7 +297,7 @@ const UserHostel = ({ navigation, route }) => {
                                         <View>
                                             <View style={styles.row3}>
                                                 <View style={styles.facilitiesBox}>
-                                                    <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                                                    <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                                                     <Text>
                                                         Room
                                                     </Text>
@@ -323,7 +315,7 @@ const UserHostel = ({ navigation, route }) => {
                 hostel ?
                     userId !== hostel.owner ?
                         <TouchableOpacity onPress={handleNavigateToMessages}>
-                            <View style={[styles.contactFixed, globalCSS.bgcTwo]}>
+                            <View style={[styles.contactFixed, globalCSS.bgcOne]}>
                                 <View>
                                     <FontAwesome5 name={"comment"} size={25} color={"#000"} />
                                 </View>
@@ -350,7 +342,7 @@ const styles = StyleSheet.create({
     top_row_one: {
         // flex: 1,
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "flex-end",
         height: 100,
         padding: 5

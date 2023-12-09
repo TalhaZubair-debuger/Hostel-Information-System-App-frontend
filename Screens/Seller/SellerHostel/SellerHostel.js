@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, TextInput, View, Dimensions, ScrollView } from 'react-native'
+import { Pressable, StyleSheet, Text, TextInput, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useCallback, useRef, useState } from 'react'
 import globalCSS from "../../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -58,21 +58,32 @@ const SellerHostel = ({ navigation, route }) => {
   const navigateToBedsInfo = () => {
     navigation.navigate("Beds Info", {id: id});
   }
+
+  const handleDeleteHostel = async () => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}hostels/delete-hostel/${id}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.message) {
+        Alert.alert("Success!", `${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
+  }
   return (
     <View style={styles.TopContainer}>
       <ScrollView style={styles.TopContainer}>
         <View style={globalCSS.bgcZero}>
           <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-            <Pressable onPress={navigateToHome}>
-              <Text>
-                <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
-              </Text>
-            </Pressable>
             <View style={globalCSS.center_vertical}>
-              <Text >
-                <FontAwesome5 name={"comment"} size={25} color={"black"} />
-              </Text>
-              <Text style={globalCSS.fontNonBold12}>
+              <Text style={globalCSS.font20}>
                 Messages
               </Text>
             </View>
@@ -134,7 +145,7 @@ const SellerHostel = ({ navigation, route }) => {
                 <Text style={globalCSS.font20}>
                   <FontAwesome5
                     name={"map-marker-alt"}
-                    size={25} color={"#00D2FF"}
+                    size={25} color={"#BF40BF"}
                   />
                   {" "}Location
                 </Text>
@@ -168,23 +179,23 @@ const SellerHostel = ({ navigation, route }) => {
 
                 {
                   hostel ?
-                    hostel.facilities === "Room + Bath + Kitchen + Wifi" ?
+                    hostel.facilities === "RoomBathKitchenWifi" ?
                       <View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                             <Text>
                               Room
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                             <Text>
                               Bathroom
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"utensils"} size={30} color={"#BF40BF"} />
                             <Text>
                               Kitchen
                             </Text>
@@ -192,7 +203,7 @@ const SellerHostel = ({ navigation, route }) => {
                         </View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"wifi"} size={30} color={"#BF40BF"} />
                             <Text>
                               Wifi
                             </Text>
@@ -202,23 +213,23 @@ const SellerHostel = ({ navigation, route }) => {
                 }
                 {
                   hostel ?
-                    hostel.facilities === "Room + Bath + Wifi" ?
+                    hostel.facilities === "RoomBathWifi" ?
                       <View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                             <Text>
                               Room
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                             <Text>
                               Bathroom
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"wifi"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"wifi"} size={30} color={"#BF40BF"} />
                             <Text>
                               Wifi
                             </Text>
@@ -230,23 +241,23 @@ const SellerHostel = ({ navigation, route }) => {
                 }
                 {
                   hostel ?
-                    hostel.facilities === "Room + Bath + Kitchen" ?
+                    hostel.facilities === "RoomBathKitchen" ?
                       <View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                             <Text>
                               Room
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                             <Text>
                               Bathroom
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"utensils"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"utensils"} size={30} color={"#BF40BF"} />
                             <Text>
                               Kitchen
                             </Text>
@@ -258,17 +269,17 @@ const SellerHostel = ({ navigation, route }) => {
                 }
                 {
                   hostel ?
-                    hostel.facilities === "Room + Bath" ?
+                    hostel.facilities === "RoomBath" ?
                       <View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                             <Text>
                               Room
                             </Text>
                           </View>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"restroom"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"restroom"} size={30} color={"#BF40BF"} />
                             <Text>
                               Bathroom
                             </Text>
@@ -280,11 +291,11 @@ const SellerHostel = ({ navigation, route }) => {
                 }
                 {
                   hostel ?
-                    hostel.facilities === "Room Only" ?
+                    hostel.facilities === "RoomOnly" ?
                       <View>
                         <View style={styles.row3}>
                           <View style={styles.facilitiesBox}>
-                            <FontAwesome5 name={"bed"} size={30} color={"#00D2FF"} />
+                            <FontAwesome5 name={"bed"} size={30} color={"#BF40BF"} />
                             <Text>
                               Room
                             </Text>
@@ -298,6 +309,9 @@ const SellerHostel = ({ navigation, route }) => {
             </View>
           </View>
 
+          <TouchableOpacity onPress={handleDeleteHostel} style={[styles.bgcRed, styles.alignCenter, globalCSS.row]}>
+            <Text style={globalCSS.font15}>Delete Hostel</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -307,6 +321,17 @@ const SellerHostel = ({ navigation, route }) => {
 export default SellerHostel
 
 const styles = StyleSheet.create({
+  alignCenter: {
+    margin: "10%",
+    borderRadius:5
+  },
+  bgcRed: {
+backgroundColor: "red",
+width: "80%",
+height: 40,
+justifyContent:"center",
+alignItems:"center"
+  },
   btnBeds: {
     width: "90%",
     justifyContent: "center",
@@ -327,7 +352,7 @@ const styles = StyleSheet.create({
   top_row_one: {
     // flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "flex-end",
     height: 100,
     padding: 5

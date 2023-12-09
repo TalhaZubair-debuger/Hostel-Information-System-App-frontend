@@ -73,7 +73,7 @@ const SignUp = ({ navigation }) => {
           onChangeText={(newValue) => setName(newValue)}
         />
         <TextInput
-          placeholder="Conact"
+          placeholder="Contact"
           style={globalCSS.inputStyle1}
           keyboardType="number-pad"
           value={contact}
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 5,
     borderRadius: 5,
-    borderColor: "#00D2FF",
+    borderColor: "#BF40BF",
     borderWidth: 2,
     shadowRadius: 5,
     shadowColor: "black",

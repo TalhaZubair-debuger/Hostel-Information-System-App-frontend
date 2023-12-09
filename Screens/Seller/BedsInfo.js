@@ -13,6 +13,7 @@ import Bed from './Bed';
 const BedsInfo = ({ navigation, route }) => {
   const [bedsData, setBedsData] = useState();
   const [change, setChange] = useState(false);
+  const [ownerId, setOwnerId] = useState("");
   const { id } = route.params;
 
   useFocusEffect(
@@ -34,6 +35,7 @@ const BedsInfo = ({ navigation, route }) => {
       if (data) {
         console.log(data);
         setBedsData(data.Beds);
+        setOwnerId(data.ownerId);
       }
     } catch (error) {
       Alert.alert("Failed to fetch!", `${error.message}`);
@@ -98,7 +100,9 @@ const BedsInfo = ({ navigation, route }) => {
                         preOccupied={item.preOccupied}
                         occupied={item.occupied}
                         occupantId={item.occupantId}
+                        ownerId={ownerId}
                         setChange={setChange}
+                        navigation={navigation}
                       />
                     )}
                     keyExtractor={(item) => item._id.toString()}

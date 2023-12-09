@@ -17,13 +17,37 @@ const Message = ({ navigation, route }) => {
   useFocusEffect(
     useCallback(() => {
       setFocus(true)
-      handleGetChatMessages();
+      handleGetChatMessages(userId, ownerId);
 
       return () => {
         setFocus(false);
       };
     }, [])
   )
+
+  const handleGetChatMessages = async (UserId, OwnerId) => {
+    try {
+      const jwtToken = await AsyncStorage.getItem("jwtToken");
+      const response = await fetch(`${HostName}chats/get-messages?userId=${UserId}&ownerId=${OwnerId}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (data.messages) {
+        setChat(data.messages.messages);
+        setCurrentUser(data.current);
+        setMessage("");
+      }
+      else {
+        Alert.alert("Alert!", `${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert("Failed to fetch!", `${error.message}`);
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     let intervalId;
@@ -39,6 +63,7 @@ const Message = ({ navigation, route }) => {
     };
   }, [chat])
 
+
   const getNewMessages = async () => {
     try {
       const chatLength = chat.length;
@@ -49,7 +74,7 @@ const Message = ({ navigation, route }) => {
         chatLength
       }
       const jwtToken = await AsyncStorage.getItem("jwtToken");
-      const response = await fetch(`${HostName}chats/get-new-messages/${ownerId}`, {
+      const response = await fetch(`${HostName}chats/get-new-messages?userId=${userId}&ownerId=${ownerId}`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -60,6 +85,7 @@ const Message = ({ navigation, route }) => {
       const data = await response.json();
       if (data.messages) {
         setChat(data.messages.messages);
+        setCurrentUser(data.current);
       }
       else {
         console.log(data.message)
@@ -69,43 +95,27 @@ const Message = ({ navigation, route }) => {
       console.log(error);
     }
   }
-  const handleGetChatMessages = async () => {
-    try {
-      const jwtToken = await AsyncStorage.getItem("jwtToken");
-      const response = await fetch(`${HostName}chats/get-messages/${ownerId}`, {
-        method: "GET",
-        headers: {
-          'Authorization': `${jwtToken}`
-        }
-      });
-      const data = await response.json();
-      if (data.messages) {
-        setChat(data.messages.messages);
-      }
-      else {
-        Alert.alert("Alert!", `${data.message}`);
-      }
-    } catch (error) {
-      Alert.alert("Failed to fetch!", `${error.message}`);
-      console.log(error);
-    }
-  }
+
+
+
   const navigateToHome = () => {
     navigation.navigate("BottomTabs")
   }
+
+
   const submitChatMessage = async () => {
     if (
       message === ""
     ) {
       Alert.alert("Failure", "Please fill form completely");
     } else {
+      console.log(ownerId + " and " + userId);
       const formData = {
-        message,
-        ownerId
+        message
       };
       try {
         const jwtToken = await AsyncStorage.getItem("jwtToken");
-        const response = await fetch(`${HostName}chats/add-message`, {
+        const response = await fetch(`${HostName}chats/add-message?userId=${userId}&ownerId=${ownerId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `${jwtToken}`
@@ -115,7 +125,7 @@ const Message = ({ navigation, route }) => {
         });
         const data = await response.json();
         if (data.messages) {
-          setChat(data.messages);
+          setChat(data.messages.messages);
           setCurrentUser(data.current);
           setMessage("");
         }
@@ -138,7 +148,7 @@ const Message = ({ navigation, route }) => {
         </Pressable>
         <View>
           <Text style={globalCSS.font20}>
-            Message [Owner]
+            Message User
           </Text>
         </View>
       </View>
@@ -149,9 +159,10 @@ const Message = ({ navigation, route }) => {
             {
               chat ?
                 chat.map(msg => (
-                  <View style={[currentUser ? currentUser === userId ? styles.send : styles.recieve : null, globalCSS.bgcOne]}>
-                    <Text key={msg}>
-                      {msg}
+                  <View style={[currentUser ? currentUser === msg.senderId ? styles.send : styles.recieve : null, 
+                  globalCSS.bgcOne]}>
+                    <Text key={msg.senderId+new Date()}>
+                      {msg.message}
                     </Text>
                   </View>
                 ))
@@ -237,7 +248,7 @@ const styles = StyleSheet.create({
     marginRight: "30%",
     borderRadius: 5,
     width: "70%",
-    borderRadius: 5
+    borderRadius: 5,
   }
 
 })

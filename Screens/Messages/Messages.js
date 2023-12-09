@@ -12,7 +12,6 @@ import { useFocusEffect } from '@react-navigation/native';
 
 
 const Messages = ({ navigation, route }) => {
-    const { userId, ownerId } = route.params;
 
     useFocusEffect(
         useCallback(() => {
@@ -50,15 +49,10 @@ const Messages = ({ navigation, route }) => {
     return (
         <View>
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-                <Pressable onPress={navigateToHome}>
-                    <Text>
-                        <FontAwesome5 name={"arrow-left"} size={20} color={"black"} />
-                    </Text>
-                </Pressable>
+                <Text style={globalCSS.font20}>Messages</Text>
             </View>
 
             <View style={styles.msgs}>
-                <Text style={globalCSS.font20}>Messages</Text>
                 <View>
                     <FlatList
                         data={DATA}
@@ -85,7 +79,7 @@ const styles = StyleSheet.create({
     top_row_one: {
         // flex: 1,
         flexDirection: "row",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "flex-end",
         height: 100,
         padding: 5
