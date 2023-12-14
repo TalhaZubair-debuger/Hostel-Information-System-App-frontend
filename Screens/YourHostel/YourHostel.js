@@ -44,7 +44,8 @@ const YourHostel = ({ navigation, route }) => {
         }
     }
     return (
-        <ScrollView>
+        <View>
+
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
                 <Text style={globalCSS.font20}>
                     Your Hostels
@@ -58,20 +59,41 @@ const YourHostel = ({ navigation, route }) => {
                             <FlatList
                                 data={beds}
                                 renderItem={({ item }) => (
-                                    <YourHostelList
-                                        navigation={navigation}
-                                        hostels={hostels ? hostels : null}
-                                        hosteliteName={item.hosteliteName}
-                                        rentAmont={item.rentAmont}
-                                        dueDate={item.dueDate}
-                                        previousDues={item.previousDues}
-                                        hostelId={item.hostelId}
-                                        bedId={item._id}
-                                        setChange={setChange}
-                                        setStripeKey={setStripeKey}
-                                    />
+
+                                    item.offlinePaymentSent ?
+                                        item.offlinePaymentSent === true && item.offlinePaymentRecieved === true ?
+                                            <YourHostelList
+                                                navigation={navigation}
+                                                hostels={hostels ? hostels : null}
+                                                hosteliteName={item.hosteliteName}
+                                                rentAmont={item.rentAmont}
+                                                dueDate={item.dueDate}
+                                                previousDues={item.previousDues}
+                                                hostelId={item.hostelId}
+                                                bedId={item._id}
+                                                setChange={setChange}
+                                                setStripeKey={setStripeKey}
+                                                offlinePayment={item.offlinePaymentRecieved}
+                                            />
+                                            :
+                                            <></>
+                                        :
+                                        <YourHostelList
+                                            navigation={navigation}
+                                            hostels={hostels ? hostels : null}
+                                            hosteliteName={item.hosteliteName}
+                                            rentAmont={item.rentAmont}
+                                            dueDate={item.dueDate}
+                                            previousDues={item.previousDues}
+                                            hostelId={item.hostelId}
+                                            bedId={item._id}
+                                            setChange={setChange}
+                                            setStripeKey={setStripeKey}
+                                        />
+                                    // <></>
+
                                 )}
-                            keyExtractor={(item) => item._id.toString()}
+                                keyExtractor={(item) => item._id.toString()}
                             />
                             :
                             <View style={styles.width100}>
@@ -83,7 +105,7 @@ const YourHostel = ({ navigation, route }) => {
                         </View>
                 }
             </View>
-        </ScrollView>
+        </View>
     )
 }
 
@@ -91,7 +113,6 @@ export default YourHostel
 
 const styles = StyleSheet.create({
     top_row_one: {
-        flex: 1,
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "flex-end",

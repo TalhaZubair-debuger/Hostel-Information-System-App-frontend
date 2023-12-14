@@ -21,6 +21,7 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { useState } from 'react';
 import YourHostel from './Screens/YourHostel/YourHostel';
 import ForgotPassword from './Screens/ForgotPassword/ForgotPassword';
+import EditUser from './Screens/User/EditUser';
 
 const HomeBottomTabs = createMaterialBottomTabNavigator();
 
@@ -126,6 +127,13 @@ function UserStackTabs() {
             headerShown: false,
           }}
         />
+        <UserStack.Screen
+          name="Edit User"
+          component={EditUser}
+          options={{
+            headerShown: false,
+          }}
+        />
       </UserStack.Navigator>
     </StripeProvider>
   )
@@ -162,6 +170,13 @@ function SellerStackTabs() {
           headerShown: false,
         }}
       />
+      <SellerStack.Screen
+          name="Edit Seller"
+          component={EditUser}
+          options={{
+            headerShown: false,
+          }}
+        />
     </SellerStack.Navigator>
   )
 }

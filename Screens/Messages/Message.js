@@ -158,8 +158,8 @@ const Message = ({ navigation, route }) => {
           <View style={styles.msgs}>
             {
               chat ?
-                chat.map(msg => (
-                  <View style={[currentUser ? currentUser === msg.senderId ? styles.send : styles.recieve : null, 
+                chat.map((msg, index) => (
+                  <View key={index} style={[currentUser ? currentUser === msg.senderId ? styles.send : styles.recieve : null, 
                   globalCSS.bgcOne]}>
                     <Text key={msg.senderId+new Date()}>
                       {msg.message}
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
-    bottom: 150,
+    bottom: 110,
     width: "100%",
     height: 700,
   },

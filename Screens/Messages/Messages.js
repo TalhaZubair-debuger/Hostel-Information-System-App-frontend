@@ -1,51 +1,46 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import hostelOneImage from "../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
-import hostelThreeImage from "../../assets/images/hostelThree.jpg";
-import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import VerticalListMessage from '../../utils/VerticalListMessage';
 import { useFocusEffect } from '@react-navigation/native';
+import HostName from '../../utils/HostName';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 const Messages = ({ navigation, route }) => {
+    const [messages, setMessages] = useState([]);
+    const [current, setCurrent] = useState(null);
 
     useFocusEffect(
         useCallback(() => {
+            handleGetUserOrOwnerData();
         }, [])
-      )
-    const DATA = [
-        {
-            id: 1,
-            image: hostelOneImage,
-            name: "Ali Khan",
-            message: "Ok Finalize the booking for me."
-        },
-        {
-            id: 2,
-            image: hostelTwoImage,
-            name: "Christen Betzman",
-            message: "It's full and final price"
-        },
-        {
-            id: 3,
-            image: hostelThreeImage,
-            name: "Roy Filth",
-            message: "No, we can't"
-        },
-        {
-            id: 4,
-            image: hostelFourImage,
-            name: "John Smith",
-            message: "Can we negotiate a little?"
-        },
-    ];
-    const navigateToHome = () => {
-        navigation.navigate("BottomTabs")
+    )
+    const handleGetUserOrOwnerData = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}chats/get-all-messages`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.messages) {
+                setMessages(data.messages);
+                setCurrent(data.current);
+            }
+            else {
+                Alert.alert("Alert!", `${data.message}`);
+            }
+        } catch (error) {
+            Alert.alert("Alert!", `${error.message}`);
+            console.log(error);
+        }
     }
+
     return (
         <View>
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
@@ -54,19 +49,23 @@ const Messages = ({ navigation, route }) => {
 
             <View style={styles.msgs}>
                 <View>
-                    <FlatList
-                        data={DATA}
-                        renderItem={({ item }) => (
-                            <VerticalListMessage
-                                image={item.image}
-                                name={item.name}
-                                message={item.message}
-                                navigation={navigation}
-                            />
-                        )}
-                        keyExtractor={(item) => item.id.toString()}
-                    // extraData={selectedId}
-                    />
+                    {
+                        messages && current != null ?
+                            messages.map((item, index) => (
+                                <View key={index}>
+                                    <VerticalListMessage
+
+                                        message={item.messages[item.messages.length - 1].message}
+                                        currentUser={current}
+                                        userId={item.userId}
+                                        ownerId={item.ownerId}
+                                        navigation={navigation}
+                                    />
+                                </View>
+                            ))
+                            :
+                            <Text>No Messages Found</Text>
+                    }
                 </View>
             </View>
         </View>

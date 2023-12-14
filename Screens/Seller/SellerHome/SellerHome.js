@@ -1,4 +1,4 @@
-import { Alert, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import globalCSS from "../../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const SellerHome = ({ navigation }) => {
   const [hostel, setHostel] = useState();
   const [user, setUser] = useState();
+  const [modalInfoVisible, setModalInfoVisible] = useState(false);
   useFocusEffect(
     useCallback(() => {
       getOwnerHostels();
@@ -62,11 +63,100 @@ const SellerHome = ({ navigation }) => {
   }
   return (
     <ScrollView>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalInfoVisible}
+        onRequestClose={() => {
+          setModalInfoVisible(!modalInfoVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <Text style={globalCSS.font20}>User Info</Text>
+
+          <View style={styles.modalInfo}>
+            <View>
+              <Text>
+                {
+                  user ?
+                    user.image ?
+                      <View style={styles.center}>
+                        <Image
+                          source={{ uri: `data:image/jpeg;base64,${user.image}` }}
+                          style={{ width: 50, height: 50, borderRadius: 50 / 2 }}
+                        />
+                      </View>
+                      :
+                      <>
+                        <Text style={styles.bold}>
+                          Image:
+                        </Text>
+                        <Text>No Image</Text>
+                      </>
+                    :
+                    <></>
+                }
+              </Text>
+              <Text>
+                <Text style={styles.bold}>
+                  Name:
+                </Text>
+                {user ? user.name : null}
+              </Text>
+              <Text>
+                <Text style={styles.bold}>
+                  Email:
+                </Text>
+                {user ? user.email : null}
+              </Text>
+              <Text>
+                <Text style={styles.bold}>
+                  Contact:
+                </Text>
+                {user ? user.contact : null}
+              </Text>
+            </View>
+
+            <Pressable
+              style={[styles.bedInfoModalBtn, globalCSS.bgcTwo]}
+              onPress={() => { navigation.navigate("Edit Seller", { user: user }) }}>
+              <Text style={[styles.text_center, globalCSS.colorWhite]}>Edit User Data</Text>
+            </Pressable>
+
+            <Pressable
+              style={[styles.bedInfoModalBtn, globalCSS.bgcZero]}
+              onPress={() => setModalInfoVisible(!modalInfoVisible)}>
+              <Text style={styles.text_center}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
       <View style={globalCSS.bgcZero}>
         <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-          <Text style={globalCSS.font20}>
-            Hi {user ? user.name : "there"}!
-          </Text>
+          <TouchableOpacity onPress={() => { setModalInfoVisible(!modalInfoVisible) }}>
+
+            <Text style={[globalCSS.font20]}>
+              {
+                user ? user.image ?
+                  <Image
+                    source={{ uri: `data:image/jpeg;base64,${user.image}` }}
+                    style={{ width: 50, height: 50, borderRadius: 30 }}
+                  />
+                  :
+                  <Text style={[globalCSS.font20]}>
+                    <FontAwesome5 name={"user"} size={25} color={"black"} />
+                  </Text>
+                  :
+                  <Text style={[globalCSS.font20]}>
+                    <FontAwesome5 name={"user"} size={25} color={"black"} />
+                  </Text>
+              }
+              {" "}
+              Hi {user ? user.name : "there"}!
+            </Text>
+          </TouchableOpacity>
           <Pressable onPress={logOut}>
             <View style={globalCSS.center_vertical}>
               <Text >
@@ -154,6 +244,28 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     justifyContent: "center",
-    alignItems:"center"
-  }
+    alignItems: "center"
+  },
+  centeredView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 200,
+    marginHorizontal: 10,
+    backgroundColor: "#fff",
+    padding: 5,
+    elevation: 30,
+    shadowColor: "#000",
+    borderRadius: 5
+  },
+  bold: {
+    fontWeight: "600"
+  },
+  bedInfoModalBtn: {
+    margin: 10,
+    padding: 5,
+    borderRadius: 5
+  },
+  text_center: {
+    textAlign: "center"
+  },
 })

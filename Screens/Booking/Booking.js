@@ -102,7 +102,26 @@ const Booking = ({ navigation, route }) => {
             console.log(error);
         }
     }
-
+    const handleOfflinePayment = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostel-beds/make-offline-payment/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${jwtToken}`
+                },
+                method: "POST"
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Success", `${data.message}`);
+                navigation.navigate("BottomTabs");
+            }
+        } catch (error) {
+            Alert.alert("Failed!", `${error.message}`);
+            console.log(error);
+        }
+    }
     return (
         <View>
             <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
@@ -134,7 +153,15 @@ const Booking = ({ navigation, route }) => {
                 <View style={styles.row}>
                     <TouchableOpacity onPress={handleMakePayment} style={[styles.btnProceedToPay, globalCSS.bgcTwo]}>
                         <Text style={globalCSS.colorWhite}>
-                            Proceed to Pay
+                            Proceed to Pay Online
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.row}>
+                    <TouchableOpacity onPress={handleOfflinePayment} style={[styles.btnProceedToPay, globalCSS.bgcOne]}>
+                        <Text style={globalCSS.colorWhite}>
+                            Offline Payment
                         </Text>
                     </TouchableOpacity>
                 </View>

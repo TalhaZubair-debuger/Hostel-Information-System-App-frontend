@@ -308,6 +308,109 @@ const UserHostel = ({ navigation, route }) => {
                                         <></> : <></>
                             }
                         </View>
+
+                        <View style={styles.facilities}>
+                            <Text style={globalCSS.font20}>
+                                Reviews
+                            </Text>
+                            {
+                                hostel ?
+                                    hostel.reviews.length != 0 ?
+                                        hostel.reviews.map((item, index) => (
+                                            <View style={styles.review} key={index}>
+                                                <Text>
+                                                    {
+                                                        item.rating === 1 ?
+                                                            <FontAwesome5
+                                                                name={"star"}
+                                                                size={20} color={"#BF40BF"}
+                                                            />
+                                                            :
+                                                            item.rating === 2 ?
+                                                                <>
+                                                                    <FontAwesome5
+                                                                        name={"star"}
+                                                                        size={20} color={"#BF40BF"}
+                                                                    />
+                                                                    <FontAwesome5
+                                                                        name={"star"}
+                                                                        size={20} color={"#BF40BF"}
+                                                                    />
+                                                                </>
+                                                                :
+                                                                item.rating === 3 ?
+                                                                    <>
+                                                                        <FontAwesome5
+                                                                            name={"star"}
+                                                                            size={20} color={"#BF40BF"}
+                                                                        />
+                                                                        <FontAwesome5
+                                                                            name={"star"}
+                                                                            size={20} color={"#BF40BF"}
+                                                                        />
+                                                                        <FontAwesome5
+                                                                            name={"star"}
+                                                                            size={20} color={"#BF40BF"}
+                                                                        />
+                                                                    </>
+                                                                    :
+                                                                    item.rating === 4 ?
+                                                                        <>
+                                                                            <FontAwesome5
+                                                                                name={"star"}
+                                                                                size={20} color={"#BF40BF"}
+                                                                            />
+                                                                            <FontAwesome5
+                                                                                name={"star"}
+                                                                                size={20} color={"#BF40BF"}
+                                                                            />
+                                                                            <FontAwesome5
+                                                                                name={"star"}
+                                                                                size={20} color={"#BF40BF"}
+                                                                            />
+                                                                            <FontAwesome5
+                                                                                name={"star"}
+                                                                                size={20} color={"#BF40BF"}
+                                                                            />
+                                                                        </>
+                                                                        :
+                                                                        item.rating === 5 ?
+                                                                            <>
+                                                                                <FontAwesome5
+                                                                                    name={"star"}
+                                                                                    size={20} color={"#BF40BF"}
+                                                                                />
+                                                                                <FontAwesome5
+                                                                                    name={"star"}
+                                                                                    size={20} color={"#BF40BF"}
+                                                                                />
+                                                                                <FontAwesome5
+                                                                                    name={"star"}
+                                                                                    size={20} color={"#BF40BF"}
+                                                                                />
+                                                                                <FontAwesome5
+                                                                                    name={"star"}
+                                                                                    size={20} color={"#BF40BF"}
+                                                                                />
+                                                                                <FontAwesome5
+                                                                                    name={"star"}
+                                                                                    size={20} color={"#BF40BF"}
+                                                                                />
+                                                                            </>
+                                                                            :
+                                                                            <Text>No Rating</Text>
+                                                    }
+                                                </Text>
+                                                <Text style={styles.nameFeedack}>{item.name}</Text>
+                                                <Text style={styles.Feedack}>{item.feedback}</Text>
+                                            </View>
+                                        ))
+                                        :
+                                        <Text>No Reviews yet</Text>
+                                    :
+                                    <Text>No Reviews yet</Text>
+                            }
+                        </View>
                     </View>
                 </View>
             </ScrollView>
@@ -329,6 +432,7 @@ const UserHostel = ({ navigation, route }) => {
                     :
                     <></>
             }
+
         </View>
     )
 }
@@ -336,6 +440,18 @@ const UserHostel = ({ navigation, route }) => {
 export default UserHostel
 
 const styles = StyleSheet.create({
+    review: {
+        width: "100%",
+        borderRadius: 5,
+        backgroundColor: "#fff",
+        padding: 5,
+        elevation: 5,
+        shadowColor: "#000",
+        marginVertical: 5
+    },
+    nameFeedack: {
+        color: "grey"
+    },
     TopContainer: {
         flex: 1,
     },

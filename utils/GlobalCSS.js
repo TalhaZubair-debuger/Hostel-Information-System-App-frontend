@@ -101,7 +101,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
         justifyContent: "center",
         alignItems: "center"
-    }
+    },
+    
 })
 
 export default styles;

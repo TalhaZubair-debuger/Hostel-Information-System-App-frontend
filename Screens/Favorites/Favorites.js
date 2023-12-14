@@ -45,53 +45,43 @@ const Favorites = ({ navigation }) => {
     }
   }
   return (
-    <ScrollView>
-      <View>
-        <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
-          <Text style={globalCSS.font20}>
-            Favourites
-          </Text>
-          <View style={globalCSS.center_vertical}>
-            <Text >
-              <FontAwesome5 name={"comment"} size={25} color={"black"} />
-            </Text>
-            <Text style={globalCSS.fontNonBold12}>
-              Messages
-            </Text>
-          </View>
-        </View>
+    <View>
+      <View style={[styles.top_row_one, globalCSS.bgcTwo]}>
+        <Text style={globalCSS.font20}>
+          Favourites
+        </Text>
+      </View>
 
-        <View style={styles.list}>
-          {
-            hostels ?
-              hostels.length ?
-                <FlatList
-                  data={hostels}
-                  renderItem={({ item }) => (
-                    <VerticalList
-                      image={item.image}
-                      metaDesc={item.description}
-                      rent={item.rent}
-                      setFavorite={setFavorite}
-                      userFavs={userFavs}
-                      id={item._id}
-                      navigation={navigation}
-                    />
-                  )}
-                  keyExtractor={(item) => item._id.toString()}
-                />
-                :
-                <View style={styles.width100}>
-                  <Text style={globalCSS.text_center}>No Favorite hostels found</Text>
-                </View>
+      <View style={styles.list}>
+        {
+          hostels ?
+            hostels.length ?
+              <FlatList
+                data={hostels}
+                renderItem={({ item }) => (
+                  <VerticalList
+                    image={item.image}
+                    metaDesc={item.description}
+                    rent={item.rent}
+                    setFavorite={setFavorite}
+                    userFavs={userFavs}
+                    id={item._id}
+                    navigation={navigation}
+                  />
+                )}
+                keyExtractor={(item) => item._id.toString()}
+              />
               :
               <View style={styles.width100}>
                 <Text style={globalCSS.text_center}>No Favorite hostels found</Text>
               </View>
-          }
-        </View>
+            :
+            <View style={styles.width100}>
+              <Text style={globalCSS.text_center}>No Favorite hostels found</Text>
+            </View>
+        }
       </View>
-    </ScrollView>
+    </View>
   )
 }
 
@@ -99,9 +89,8 @@ export default Favorites
 
 const styles = StyleSheet.create({
   top_row_one: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "flex-end",
     height: 100,
     padding: 5

@@ -60,10 +60,14 @@ const BedsInfo = ({ navigation, route }) => {
           </View>
 
           <View style={[styles.row, globalCSS.bgcZero]}>
-          <View style={styles.item}>
+            <View style={styles.item}>
               <View style={styles.lightgrey}></View>
               <Text style={styles.mt_10}>This background for pre-occupied beds</Text>
             </View>
+          </View>
+          <View style={styles.item}>
+            <View style={styles.lightpurple}></View>
+            <Text style={styles.mt_10}>This background is for unverified offline payments.</Text>
           </View>
 
           <View style={[styles.row, globalCSS.bgcZero]}>
@@ -100,6 +104,7 @@ const BedsInfo = ({ navigation, route }) => {
                         preOccupied={item.preOccupied}
                         occupied={item.occupied}
                         occupantId={item.occupantId}
+                        offlinePaymentRecieved={item.offlinePaymentRecieved}
                         ownerId={ownerId}
                         setChange={setChange}
                         navigation={navigation}
@@ -214,6 +219,11 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     backgroundColor: "lightgrey"
+  },
+  lightpurple: {
+    width: 10,
+    height: 10,
+    backgroundColor: "#CBC3E3"
   },
   red: {
     width: 10,

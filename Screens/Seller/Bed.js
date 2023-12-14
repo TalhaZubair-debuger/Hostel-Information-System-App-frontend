@@ -8,7 +8,7 @@ import HostName from '../../utils/HostName';
 
 
 const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDues,
-    preOccupied, occupied, occupantId, id, setChange, ownerId, navigation }) => {
+    preOccupied, occupied, occupantId, id, setChange, ownerId, navigation, offlinePaymentRecieved }) => {
 
     const [addBedInfoModel, setAddBedInfoModel] = useState(false);
     const [editBedInfoModel, setEditBedInfoModel] = useState(false);
@@ -133,6 +133,26 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
                 Alert.alert("Failed!", `${error.message}`);
                 console.log(error);
             }
+        }
+    }
+    const handleVerifyOfflinePayments = async () => {
+        try {
+            const jwtToken = await AsyncStorage.getItem("jwtToken");
+            const response = await fetch(`${HostName}hostel-beds/verify-offline-payments/${id}`, {
+                method: "PATCH",
+                headers: {
+                    'Authorization': `${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.message) {
+                Alert.alert("Alert!", `${data.message}`);
+                setChange(true);
+                setModalInfoVisible(!modalInfoVisible);
+            }
+        } catch (error) {
+            Alert.alert("Failed to fetch!", `${error.message}`);
+            console.log(error);
         }
     }
     return (
@@ -264,6 +284,20 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
                             :
                             <></>
                     }
+
+                    {
+                        offlinePaymentRecieved === false ?
+                            <>
+                                <Pressable
+                                    style={[styles.bedMsgModalBtn, globalCSS.bgcOne]}
+                                    onPress={handleVerifyOfflinePayments}>
+                                    <Text style={[styles.textStyle]}>Verify Offline Payment</Text>
+                                </Pressable>
+                            </>
+                            :
+                            <></>
+                    }
+
                     <Pressable
                         style={[styles.bedInfoModalBtn, globalCSS.bgcTwo]}
                         onPress={handleEditHostelliteData}>
@@ -347,7 +381,8 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
 
             <View style={styles.container}>
                 <TouchableOpacity onPress={handleModelOpen}>
-                    <View style={[styles.bed, preOccupied === true ? styles.greyBgc : styles.whiteBgc]}>
+                    <View style={[styles.bed, preOccupied === true ? styles.greyBgc :
+                        offlinePaymentRecieved === false ? globalCSS.bgcOne : styles.whiteBgc]}>
                         <FontAwesome5 name={"bed"} size={20} color={occupied === false ? "grey"
                             : occupied === true && previousDues === "Cleared" ? "lightgreen" :
                                 occupied === true && previousDues === "Pending" ? "red" : "black"} />
