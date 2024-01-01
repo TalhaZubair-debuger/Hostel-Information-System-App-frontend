@@ -90,34 +90,47 @@ const SellerHostel = ({ navigation, route }) => {
           </View>
 
           <View>
-            <Carousel
-              layout="tinder"
-              ref={isCarousel}
-              layoutCardOffset={9}
-              data={images}
-              renderItem={Carousal}
-              sliderWidth={windowWidth}
-              itemWidth={windowWidth}
-              // itemHeight={windowHeight}
-              inactiveSlideShift={0}
-              onSnapToItem={(index) => setImageIndex(index)}
-              useScrollView={true}
-            />
-            <Pagination
-              dotsLength={images ? images.length : null}
-              activeDotIndex={imageIndex}
-              carouselRef={isCarousel}
-              dotStyle={{
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                marginHorizontal: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.92)'
-              }}
-              inactiveDotOpacity={0.4}
-              inactiveDotScale={0.6}
-              tappableDots={true}
-            />
+            {
+              images ? images.length ?
+                <Carousel
+                  layout="tinder"
+                  ref={isCarousel}
+                  layoutCardOffset={9}
+                  data={images}
+                  renderItem={Carousal}
+                  sliderWidth={windowWidth}
+                  itemWidth={windowWidth}
+                  inactiveSlideShift={0}
+                  onSnapToItem={(index) => setImageIndex(index)}
+                  useScrollView={true}
+                />
+                :
+                null
+                :
+                null
+            }
+            {
+              images ? images.length ?
+                <Pagination
+                  dotsLength={images ? images.length : null}
+                  activeDotIndex={imageIndex}
+                  carouselRef={isCarousel}
+                  dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                  }}
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={0.6}
+                  tappableDots={true}
+                />
+                :
+                null
+                :
+                null
+            }
           </View>
 
           <View style={[styles.btnBeds, globalCSS.bgcTwo]}>

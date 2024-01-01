@@ -53,75 +53,73 @@ const BedsInfo = ({ navigation, route }) => {
           </Text>
         </Pressable>
       </View>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.heading}>
-            <Text style={globalCSS.font20}>Beds Management</Text>
-          </View>
+      <View style={styles.container}>
+        <View style={styles.heading}>
+          <Text style={globalCSS.font20}>Beds Management</Text>
+        </View>
 
-          <View style={[styles.row, globalCSS.bgcZero]}>
-            <View style={styles.item}>
-              <View style={styles.lightgrey}></View>
-              <Text style={styles.mt_10}>This background for pre-occupied beds</Text>
-            </View>
-          </View>
+        <View style={[styles.row, globalCSS.bgcZero]}>
           <View style={styles.item}>
-            <View style={styles.lightpurple}></View>
-            <Text style={styles.mt_10}>This background is for unverified offline payments.</Text>
-          </View>
-
-          <View style={[styles.row, globalCSS.bgcZero]}>
-            <View style={styles.item}>
-              <View style={styles.grey}></View>
-              <Text style={styles.mt_10}>Unoccupied</Text>
-            </View>
-            <View style={styles.item}>
-              <View style={styles.red}></View>
-              <Text style={styles.mt_10}>Dues Pending</Text>
-            </View>
-            <View style={styles.item}>
-              <View style={styles.green}></View>
-              <Text style={styles.mt_10}>Dues Cleared</Text>
-            </View>
-          </View>
-
-          <View >
-            {
-              bedsData ?
-                bedsData.length ?
-                  <FlatList
-                    data={bedsData}
-                    numColumns={5}
-                    renderItem={({ item }) => (
-                      <Bed
-                        hostelId={item.hostelId}
-                        hosteliteName={item.hosteliteName}
-                        contact={item.contact}
-                        id={item._id}
-                        rentAmont={item.rentAmont}
-                        dueDate={item.dueDate}
-                        previousDues={item.previousDues}
-                        preOccupied={item.preOccupied}
-                        occupied={item.occupied}
-                        occupantId={item.occupantId}
-                        offlinePaymentRecieved={item.offlinePaymentRecieved}
-                        ownerId={ownerId}
-                        setChange={setChange}
-                        navigation={navigation}
-                      />
-                    )}
-                    keyExtractor={(item) => item._id.toString()}
-                  />
-                  :
-                  <View style={styles.width100}>
-                    <Text style={globalCSS.text_center}>No Beds data found</Text>
-                  </View>
-                :
-                <></>
-            }
+            <View style={styles.lightgrey}></View>
+            <Text style={styles.mt_10}>This background for pre-occupied beds</Text>
           </View>
         </View>
-      </ScrollView>
+        <View style={styles.item}>
+          <View style={styles.lightpurple}></View>
+          <Text style={styles.mt_10}>This background is for unverified offline payments.</Text>
+        </View>
+
+        <View style={[styles.row, globalCSS.bgcZero]}>
+          <View style={styles.item}>
+            <View style={styles.grey}></View>
+            <Text style={styles.mt_10}>Unoccupied</Text>
+          </View>
+          <View style={styles.item}>
+            <View style={styles.red}></View>
+            <Text style={styles.mt_10}>Dues Pending</Text>
+          </View>
+          <View style={styles.item}>
+            <View style={styles.green}></View>
+            <Text style={styles.mt_10}>Dues Cleared</Text>
+          </View>
+        </View>
+
+        <View >
+          {
+            bedsData ?
+              bedsData.length ?
+                <FlatList
+                  data={bedsData}
+                  numColumns={5}
+                  renderItem={({ item }) => (
+                    <Bed
+                      hostelId={item.hostelId}
+                      hosteliteName={item.hosteliteName}
+                      contact={item.contact}
+                      id={item._id}
+                      rentAmont={item.rentAmont}
+                      dueDate={item.dueDate}
+                      previousDues={item.previousDues}
+                      preOccupied={item.preOccupied}
+                      occupied={item.occupied}
+                      occupantId={item.occupantId}
+                      offlinePaymentRecieved={item.offlinePaymentRecieved}
+                      ownerId={ownerId}
+                      setChange={setChange}
+                      navigation={navigation}
+                    />
+                  )}
+                  keyExtractor={(item) => item._id.toString()}
+                />
+                :
+                <View style={styles.width100}>
+                  <Text style={globalCSS.text_center}>No Beds data found</Text>
+                </View>
+              :
+              <></>
+          }
+        </View>
+      </View>
     </View>
   )
 }

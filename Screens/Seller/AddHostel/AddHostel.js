@@ -365,7 +365,7 @@ const AddHostel = ({ navigation }) => {
           <View style={[styles.row, styles.mt10]}>
             <View style={styles.width100}>
             <Text style={globalCSS.font15NonBold}>
-                Optional:
+                {/* Optional: */}
               </Text>
               <Pressable
                 onPress={() => setOnlinePaymentmodalVisible(!onlinePaymentmodalVisible)}

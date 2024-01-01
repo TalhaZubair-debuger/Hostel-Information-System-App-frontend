@@ -58,7 +58,7 @@ const YourHostel = ({ navigation, route }) => {
                         beds.length ?
                             <FlatList
                                 data={beds}
-                                renderItem={({ item }) => (
+                                renderItem={({ item, index }) => (
 
                                     item.offlinePaymentSent ?
                                         item.offlinePaymentSent === true && item.offlinePaymentRecieved === true ?
@@ -74,6 +74,7 @@ const YourHostel = ({ navigation, route }) => {
                                                 setChange={setChange}
                                                 setStripeKey={setStripeKey}
                                                 offlinePayment={item.offlinePaymentRecieved}
+                                                key={index}
                                             />
                                             :
                                             <></>
@@ -89,6 +90,7 @@ const YourHostel = ({ navigation, route }) => {
                                             bedId={item._id}
                                             setChange={setChange}
                                             setStripeKey={setStripeKey}
+                                            key={index}
                                         />
                                     // <></>
 
