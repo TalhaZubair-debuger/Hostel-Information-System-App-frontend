@@ -32,6 +32,9 @@ const ForgotPassword = ({ navigation }) => {
                     body: JSON.stringify(formData)
                 });
                 const data = await response.json();
+                if (data.message && !data.otp) {
+                    Alert.alert("Alert!", data.message);
+                }
                 if (data.otp) {
                     setCheckOTP(data.otp);
                     setEnterOTP(!enterOTP);

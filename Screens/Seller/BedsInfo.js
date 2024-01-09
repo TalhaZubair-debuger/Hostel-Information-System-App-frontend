@@ -64,9 +64,12 @@ const BedsInfo = ({ navigation, route }) => {
             <Text style={styles.mt_10}>This background for pre-occupied beds</Text>
           </View>
         </View>
-        <View style={styles.item}>
-          <View style={styles.lightpurple}></View>
-          <Text style={styles.mt_10}>This background is for unverified offline payments.</Text>
+
+        <View style={[styles.row, globalCSS.bgcZero]}>
+          <View style={styles.item}>
+            <View style={styles.lightpurple}></View>
+            <Text style={styles.mt_10}>This background is for unverified offline payments.</Text>
+          </View>
         </View>
 
         <View style={[styles.row, globalCSS.bgcZero]}>
@@ -104,6 +107,7 @@ const BedsInfo = ({ navigation, route }) => {
                       occupied={item.occupied}
                       occupantId={item.occupantId}
                       offlinePaymentRecieved={item.offlinePaymentRecieved}
+                      offlinePaymentSent={item.offlinePaymentSent}
                       ownerId={ownerId}
                       setChange={setChange}
                       navigation={navigation}
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 50,
+    paddingVertical: 80,
     maxHeight: "100%"
   },
   preOccupiedBeds: {

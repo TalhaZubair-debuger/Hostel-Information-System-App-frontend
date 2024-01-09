@@ -58,7 +58,7 @@ const VerticalListMessage = ({ message, ownerId, userId, currentUser, navigation
     }
 
     return (
-        <TouchableOpacity onPress={() => { navigation.navigate("Message", { userId, ownerId }) }}>
+        <TouchableOpacity onPress={() => { navigation.navigate("Message", { userId, ownerId, name }) }}>
             <View style={styles.list_item}>
                 {
                     user ? user.image ?

@@ -12,44 +12,56 @@ const SignUp = ({ navigation }) => {
   const [error, setError] = useState("");
 
 
-  const handleSignUp = () => {
-    if (!email || !password || !contact || !name || !confirmPassword) {
-      setError("Fill all fields");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords donot match");
-      return;
-    }
-
-    fetch(`${HostName}users/signup`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        name,
-        contact,
-        password,
-        confirmPassword
-      }),
-    })
-      .then((res) => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Something went wrong.");
+  const handleSignUp = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email === "" || password === "" || contact === null || name === "" || confirmPassword === "") {
+      Alert.alert("Alert!", "Please fill the form completely.");
+    } else {
+      try {
+        if (!emailRegex.test(email)) {
+          Alert.alert('Alert!', 'Entered value is not an email');
+          return;
         }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        navigation.navigate("Login");
-      })
-      .catch((err) => {
-        setError(err.message);
-        Alert.alert("Alert", err.message)
-        // console.log(err.data.msg);
-      });
+        if (contact.length < 10){
+          Alert.alert('Alert!', 'Contact No. length should be minimum 10 numbers');
+        return;
+        }
+        if (password !== confirmPassword){
+          Alert.alert('Alert!', "Passwords doesn't match");
+          return;
+        }
+
+        const res = await fetch(`${HostName}users/signup`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            name,
+            contact,
+            password,
+            confirmPassword
+          })
+        })
+
+        const data = await res.json();
+        if (data.message && !data.userId){
+          Alert.alert("Alert!", data.message);
+          return;
+        }
+        if (data.userId) {
+          Alert.alert("Alert!", data.message);
+          navigation.navigate("Login");
+          return;
+        }
+        console.log(data + " line 81");
+      } catch (err) {
+        Alert.alert("Error!", err.message);
+        console.log(err + "line 84");
+        return;
+      }
+    }
   }
   return (
     <View style={[styles.main_center_container, globalCSS.bgcZero]}>
@@ -64,12 +76,14 @@ const SignUp = ({ navigation }) => {
           placeholder="Email"
           style={globalCSS.inputStyle1}
           value={email}
+          inputMode='email'
           onChangeText={(newValue) => setEmail(newValue)}
         />
         <TextInput
           placeholder="Name"
           style={globalCSS.inputStyle1}
           value={name}
+          inputMode='text'
           onChangeText={(newValue) => setName(newValue)}
         />
         <TextInput
@@ -77,18 +91,21 @@ const SignUp = ({ navigation }) => {
           style={globalCSS.inputStyle1}
           keyboardType="number-pad"
           value={contact}
+          inputMode='numeric'
           onChangeText={(newValue) => setContact(newValue)}
         />
         <TextInput
           placeholder="Password"
           style={globalCSS.inputStyle1}
           value={password}
+          inputMode='text'
           onChangeText={(newValue) => setPassword(newValue)}
         />
         <TextInput
           placeholder="Confirm Password"
           style={globalCSS.inputStyle1}
           value={confirmPassword}
+          inputMode='text'
           onChangeText={(newValue) => setConfirmPassword(newValue)}
         />
         <Pressable

@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.talhazubair01.hisapp"
+      "package": "com.talhajameel.hisapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,7 +32,7 @@
         "projectId": "8a34094c-6e2f-4dee-b186-aceadf2c7439"
       }
     },
-    "owner": "talhazubair01",
+    "owner": "talhajameel",
     "plugins": [
       [
         "expo-image-picker",

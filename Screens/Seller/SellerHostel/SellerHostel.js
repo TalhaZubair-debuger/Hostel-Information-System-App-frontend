@@ -71,6 +71,7 @@ const SellerHostel = ({ navigation, route }) => {
       const data = await response.json();
       if (data.message) {
         Alert.alert("Success!", `${data.message}`);
+        navigation.navigate("SellerHome");
       }
     } catch (error) {
       Alert.alert("Failed to fetch!", `${error.message}`);

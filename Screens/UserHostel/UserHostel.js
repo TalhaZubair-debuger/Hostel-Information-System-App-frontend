@@ -4,10 +4,6 @@ import globalCSS from "../../utils/GlobalCSS";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Carousal from './Carousal';
 import Carousel, { Pagination } from 'react-native-snap-carousel'
-import hostelOneImage from "../../assets/images/hostelOne.jpg";
-import hostelTwoImage from "../../assets/images/hostelTwo.jpg";
-import hostelThreeImage from "../../assets/images/hostelThree.jpg";
-import hostelFourImage from "../../assets/images/hostelFour.jpg";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HostName from '../../utils/HostName';
 import { useFocusEffect } from '@react-navigation/native';

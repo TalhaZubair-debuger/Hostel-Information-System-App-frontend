@@ -8,7 +8,7 @@ import HostName from '../../utils/HostName';
 
 
 const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDues,
-    preOccupied, occupied, occupantId, id, setChange, ownerId, navigation, offlinePaymentRecieved }) => {
+    preOccupied, occupied, occupantId, id, setChange, ownerId, navigation, offlinePaymentRecieved, offlinePaymentSent }) => {
 
     const [addBedInfoModel, setAddBedInfoModel] = useState(false);
     const [editBedInfoModel, setEditBedInfoModel] = useState(false);
@@ -286,7 +286,7 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
                     }
 
                     {
-                        offlinePaymentRecieved === false ?
+                        offlinePaymentSent === true && offlinePaymentRecieved === false ?
                             <>
                                 <Pressable
                                     style={[styles.bedMsgModalBtn, globalCSS.bgcOne]}
@@ -382,7 +382,7 @@ const Bed = ({ hostelId, hosteliteName, contact, rentAmont, dueDate, previousDue
             <View style={styles.container}>
                 <TouchableOpacity onPress={handleModelOpen}>
                     <View style={[styles.bed, preOccupied === true ? styles.greyBgc :
-                        offlinePaymentRecieved === false ? globalCSS.bgcOne : styles.whiteBgc]}>
+                        offlinePaymentSent === true && offlinePaymentRecieved === false ? globalCSS.bgcOne : styles.whiteBgc]}>
                         <FontAwesome5 name={"bed"} size={20} color={occupied === false ? "grey"
                             : occupied === true && previousDues === "Cleared" ? "lightgreen" :
                                 occupied === true && previousDues === "Pending" ? "red" : "black"} />

@@ -94,8 +94,9 @@ const SearchHostels = ({ navigation, route }) => {
         else if (city !== "" && roomSize !== "" && facilities !== "" && bedsInRoom !== "" && university !== "") {
             try {
                 const jwtToken = await AsyncStorage.getItem("jwtToken");
-                console.log(city + " " + roomSize + " " + facilities + " " + bedsInRoom + " " + university);
-                const response = await fetch(`${HostName}hostels/hostels-with-filter?city=${city}&roomSize=${roomSize}&facilities=${facilities}&beds=${bedsInRoom}&university=${university}`, {
+                const response = await fetch(`${HostName}hostels
+                /hostels-with-filter?city=${city}&roomSize=${roomSize}
+                &facilities=${facilities}&beds=${bedsInRoom}&university=${university}`, {
                     method: "GET",
                     headers: {
                         'Authorization': `${jwtToken}`

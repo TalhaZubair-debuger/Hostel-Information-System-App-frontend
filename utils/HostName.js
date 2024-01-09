@@ -1,1 +1,1 @@
-export default host = "http://192.168.1.6:1234/";
+export default host = "http://192.168.1.10:1234/";

@@ -36,6 +36,7 @@ const Login = ({ navigation }) => {
   const handleSignIn = async (event) => {
     if (!email || !password) {
       setError("Fill all fields");
+      Alert.alert("Alert!", "Fill all fields.");
       return;
     }
     try {
